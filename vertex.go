@@ -113,7 +113,7 @@ func SendData(vertex int, datatype string, data []byte) (error){
 	}
 	var key string
 	if vertex == 0 {
-		key = fmt.Sprintf("%d.#", Buffer)
+		key = fmt.Sprintf("#.#")
 	} else{
 		key = fmt.Sprintf("%d.%d", Buffer, vertex)
 		sendQ := fmt.Sprintf("Q%d%d", Buffer, vertex)
