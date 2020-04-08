@@ -115,14 +115,14 @@ func SendData(vertex int, datatype string, data []byte) (error){
 		key = fmt.Sprintf("%d.#", Buffer)
 	} else{
 		key = fmt.Sprintf("%d.%d", Buffer, vertex)
-	}
-	sendQ := fmt.Sprintf("Q%d%d", Buffer, vertex)
-	que, err := Ch.QueueInspect(sendQ)
-	if que.Name == "lol"{
-		log.Printf("lol")
-	}
-	if err != nil{
-		return fmt.Errorf("Destination queue does not exist...")
+		sendQ := fmt.Sprintf("Q%d%d", Buffer, vertex)
+		_, err := Ch.QueueInspect(sendQ)
+		//if que.Name == "lol"{
+		//	log.Printf("lol")
+		//}
+		if err != nil{
+			return fmt.Errorf("Destination queue does not exist...")
+		}
 	}
 	err = Ch.Publish(
 		ExchangeName,	// exchange
