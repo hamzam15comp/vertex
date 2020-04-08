@@ -7,9 +7,9 @@ import (
 )
 /*
 func main(){
-        initVertex(1, 2, 1)
+        InitVertex(1, 2, 1)
         for {
-		datatype, data, err := receiveData(true)
+		datatype, data, err := ReceiveData(true)
 		failOnError(err, "Errors")
 		log.Printf("%s\t%s", datatype, data)
 	}
@@ -25,7 +25,7 @@ var Conn* amqp.Connection
 var Ch* amqp.Channel
 var Q amqp.Queue
 var TYPE string = "topic"
-var MsgQ chan amqp.Delivery
+var MsgQ <-chan amqp.Delivery
 
 func failOnError(err error, msg string) {
 	if err != nil {
