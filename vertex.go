@@ -92,7 +92,7 @@ func InitVertex(buffer int, vertex int, vertexType int) {
 				nil)
 		failOnError(err, "Failed to bind a queue")
 		cname := fmt.Sprintf("C%d%d", Buffer, Vertex)
-		MsgQ, err := Ch.Consume(
+		MsgQ, err = Ch.Consume(
 			Q.Name,	// queue
 			cname,	// consumer
 			false,	// auto ack
