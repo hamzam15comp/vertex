@@ -25,7 +25,7 @@ var Conn* amqp.Connection
 var Ch* amqp.Channel
 var Q amqp.Queue
 var TYPE string = "topic"
-var MsgQ chan Delivery
+var MsgQ chan amqp.Delivery
 
 func failOnError(err error, msg string) {
 	if err != nil {
