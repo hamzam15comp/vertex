@@ -107,6 +107,7 @@ func InitVertex(buffer int, vertex int, vertexType int) {
 }
 
 func SendData(vertex int, datatype string, data []byte) (error){
+	var err error
 	if(Buffer == -1 || Vertex == -1){
 		return fmt.Errorf("Vertex Uninitialized")
 	}
