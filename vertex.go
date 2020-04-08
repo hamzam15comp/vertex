@@ -25,7 +25,7 @@ var Conn* amqp.Connection
 var Ch* amqp.Channel
 var Q amqp.Queue
 var TYPE string = "topic"
-
+var MsgQ chan
 
 func failOnError(err error, msg string) {
 	if err != nil {
@@ -91,6 +91,17 @@ func InitVertex(buffer int, vertex int, vertexType int) {
 				false,
 				nil)
 		failOnError(err, "Failed to bind a queue")
+		cname := fmt.Sprintf("C%d%d", Buffer, Vertex)
+		MsgQ, err := Ch.Consume(
+			Q.Name,	// queue
+			cname,	// consumer
+			false,	// auto ack
+			false,	// exclusive
+			false,	// no local
+			false,	// no wait
+			nil,	// args
+		)
+		failOnError(err, "Failed to register a consumer")
 	}
 
 }
@@ -130,18 +141,7 @@ func SendData(vertex int, datatype string, data []byte) (error){
 
 
 func ReceiveData(ack bool) (string, []byte, error){
-	//cname := fmt.Sprintf("C%d%d", Buffer, Vertex)
-	m, err := Ch.Consume(
-		Q.Name,	// queue
-		"",	// consumer
-		false,	// auto ack
-		false,	// exclusive
-		false,	// no local
-		false,	// no wait
-		nil,	// args
-	)
-	failOnError(err, "Failed to register a consumer")
-	msg := <-m
+	msg := <-MsgQ
 	if ack == true{
 		msg.Ack(true)
 	}
