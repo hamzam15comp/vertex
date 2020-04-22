@@ -37,7 +37,7 @@ func InitVertex(buffer int, vertex int, vertexType int) {
 	var err error
 	Buffer = buffer
 	Vertex = vertex
-	Host = fmt.Sprintf("amqp://guest:guest@buffer%d:5672/", buffer)
+	Host = fmt.Sprintf("amqp://guest:guest@edge%d:5672/", buffer)
 	Conn, err = amqp.Dial(Host)
 	failOnError(err, "Failed to Connect to RabbitMQ")
 	//defer Conn.Close()
