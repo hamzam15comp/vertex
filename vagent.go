@@ -18,7 +18,11 @@ type ControlMsg struct {
 	Cmd        string
 	Msgid      string
 }
-
+var ptest PipeData = PipeData{
+	SendTo: "all",
+	Datatype: "datatype",
+	Data: []byte("data"),
+}
 var SubVertex = [...]VertexInfo{}
 var PubVertex = [...]VertexInfo{}
 
@@ -36,21 +40,21 @@ func TransmitToEdge(){
 				continue
 			}
 			logger.Printf("Received from pipe\n")
-			fmt.Printf("%v", vi)
-			serr := SendDataEdge(
-				vi,
-				pi.SendTo,
-				pi.Datatype,
-				pi.Data,
-			)
-			if serr != nil {
-				removeVertexInfo(vi, "pub")
-				logger.Printf(
-					`Send to edge %d failed.
-					Closing and deleting connection`,
-					vi.edge,
-				)
-			}
+			fmt.Println(vi)
+			//serr := SendDataEdge(
+			//	vi,
+			//	pi.SendTo,
+			//	pi.Datatype,
+			//	pi.Data,
+			//)
+			//if serr != nil {
+			//	removeVertexInfo(vi, "pub")
+			//	logger.Printf(
+			//		`Send to edge %d failed.
+			//		Closing and deleting connection`,
+			//		vi.edge,
+			//	)
+			//}
 			time.Sleep(2*time.Second)
 
 		}
@@ -78,19 +82,20 @@ func ListenToEdge() {
 			continue
 		}
 		for vi := range SubVertex {
-			var p PipeData
-			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
-			if err != nil {
-				removeVertexInfo(vi, "sub")
-				logger.Printf(
-					`Receive from edge %d failed.
-					Closing and deleting connection`,
-					vi.edge,
-				)
-			}
-			WriteToPipe(IN, p)
+			//var p PipeData
+			//p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
+			//if err != nil {
+			//	removeVertexInfo(vi, "sub")
+			//	logger.Printf(
+			//		`Receive from edge %d failed.
+			//		Closing and deleting connection`,
+			//		vi.edge,
+			//	)
+			//}
+			WriteToPipe(IN, ptest)
 			logger.Println("Writing data %v to pipe", p)
 			time.Sleep(2*time.Second)
+			fmt.Println(vi)
 		}
 	}
 
