@@ -23,8 +23,8 @@ var ptest PipeData = PipeData{
 	Datatype: "datatype",
 	Data: []byte("data"),
 }
-var SubVertex = [...]VertexInfo{}
-var PubVertex = [...]VertexInfo{}
+var SubVertex []VertexInfo = make([]VertexInfo, 128)
+var PubVertex []VertexInfo = make([]VertexInfo, 128)
 
 func TransmitToEdge(){
 	for {
@@ -93,7 +93,7 @@ func ListenToEdge() {
 			//	)
 			//}
 			WriteToPipe(IN, ptest)
-			logger.Println("Writing data %v to pipe", p)
+			logger.Println("Writing data %v to pipe", ptest)
 			time.Sleep(2*time.Second)
 			fmt.Println(vi)
 		}
@@ -133,8 +133,8 @@ func Vamain() {
 	//go ListenToController()
 	pub1 := InitVertex(1, 3, "pub")
 	sub1 := InitVertex(1, 2, "sub")
-	PubVertex = append(PubVertex, pub1)
-	SubVertex = append(SubVertex, sub1)
+	PubVertex = append(pub1)
+	SubVertex = append(sub1)
 	for {
 		time.Sleep(10*time.Second)
 	}
