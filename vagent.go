@@ -31,7 +31,7 @@ func TransmitToEdge(){
 		if len(PubVertex) == 0{
 			continue
 		}
-		for vi := range PubVertex {
+		for _, vi := range PubVertex {
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -82,7 +82,7 @@ func ListenToEdge() {
 		if len(SubVertex) == 0 {
 			continue
 		}
-		for vi := range SubVertex {
+		for _, vi := range SubVertex {
 			//var p PipeData
 			//p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			//if err != nil {
