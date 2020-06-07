@@ -31,7 +31,14 @@ var PubVertex = []VertexInfo{}
 
 func TransmitToEdge(){
 	for {
-		PubVertex = append(PubVertex, <-pub)
+		select {
+			case p := <-pub:
+				PubVertex = append(PubVertex, p)
+			default:
+				if len(PubVertex) == 0 {
+					continue
+				}
+		}
 		for _, vi := range PubVertex {
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
@@ -80,7 +87,14 @@ func removeVertexInfo(vi VertexInfo, aname string){
 
 func ListenToEdge() {
 	for {
-		SubVertex = append(SubVertex, <-sub)
+		select {
+			case s := <-sub:
+				SubVertex = append(SubVertex, s)
+			default:
+				if len(SubVertex) == 0 {
+					continue
+				}
+		}
 		for _, vi := range SubVertex {
 			//var p PipeData
 			//p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
