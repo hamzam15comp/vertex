@@ -7,8 +7,8 @@ import (
 	"github.com/streadway/amqp"
 )
 
-//Vertex struct to hold the state
-type Vertex struct {
+//vertexInfo struct to hold the state
+type vertexInfo struct {
 	edge         int
 	vertexno     int
 	vertexType   string
@@ -31,8 +31,8 @@ func failOnError(err error, msg string) {
 }
 
 //InitVertex initializes the vertex
-func InitVertex(edge int, vertex int, vertexType string) Vertex {
-	var v Vertex
+func InitVertex(edge int, vertex int, vertexType string) vertexInfo {
+	var v vertexInfo
 	var err error
 	v.dtype = "fanout"
 	v.vertexno = vertex
@@ -109,8 +109,8 @@ func InitVertex(edge int, vertex int, vertexType string) Vertex {
 	return v
 }
 
-//SendData sends data
-func SendData(v Vertex, datatype string, data []byte) error {
+//SendDataEdge sends data
+func SendDataEdge(v vertexInfo, datatype string, data []byte) error {
 	var err error
 	if v.edge == -1 || v.vertexno == -1 {
 		return fmt.Errorf("Vertex Uninitialized")
@@ -141,8 +141,8 @@ func SendData(v Vertex, datatype string, data []byte) error {
 	return nil
 }
 
-//ReceiveData receives data
-func ReceiveData(v Vertex, ack bool) (string, []byte, error) {
+//ReceiveDataEdge receives data
+func ReceiveDataEdge(v vertexInfo, ack bool) (string, []byte, error) {
 	msg := <-v.msgQ
 	if ack == true {
 		msg.Ack(true)
@@ -156,12 +156,12 @@ func main() {
 	fmt.Printf("%v\n", pub1)
 	sub1 := InitVertex(1, 2, "sub")
 	fmt.Printf("%v\n", sub1)
-	err := SendData(pub1, "datatype", []byte("data"))
+	err := SendDataEdge(pub1, "datatype", []byte("data"))
 	fmt.Println(err)
-	datatype, data, err := ReceiveData(sub1, true)
+	datatype, data, err := ReceiveDataEdge(sub1, true)
 	fmt.Println(datatype, string(data), err)
 	// for {
-	// 	datatype, data, err := ReceiveData(true)
+	// 	datatype, data, err := ReceiveDataEdge(true)
 	// 	failOnError(err, "Errors")
 	// 	log.Printf("%s\t%s", datatype, data)
 	// }
