@@ -96,7 +96,7 @@ func ListenToEdge() {
 			//}
 			WriteToPipe(IN, p)
 			logger.Println("Writing data %v to pipe", p)
-			fmt.Printf("%v", vi)
+			logger.Printf("%v", vi)
 			time.Sleep(10*time.Second)
 		}
 	}
@@ -131,7 +131,7 @@ func Vamain() {
 	logInit()
 	go ListenToEdge()
 	go TransmitToEdge()
-	go LaunchApp("/pkg/app.go")
+	//go LaunchApp("/pkg/app.go")
 	//go ListenToController()
 	pub1 := InitVertex(1, 1, "pub")
 	sub1 := InitVertex(1, 2, "sub")
