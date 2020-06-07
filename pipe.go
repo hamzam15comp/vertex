@@ -44,6 +44,7 @@ func CreatePipe(pipeName string) error {
 }
 
 func ReadFromPipe(pipeName string) (PipeData, error) {
+	fmt.Println("REached Here readfrom Pipe")
 	var buff bytes.Buffer
 	var p PipeData
 	input, operr := os.OpenFile(
