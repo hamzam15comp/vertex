@@ -134,8 +134,8 @@ func Vamain() {
 	//go ListenToController()
 	pub1 := InitVertex(1, 3, "pub")
 	sub1 := InitVertex(1, 2, "sub")
-	PubVertex = append(PubVertex, pub1)
-	SubVertex = append(SubVertex, sub1)
+	//PubVertex = append(PubVertex, pub1)
+	//SubVertex = append(SubVertex, sub1)
 	for {
 		time.Sleep(10*time.Second)
 	}
