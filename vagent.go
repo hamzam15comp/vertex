@@ -10,8 +10,8 @@ import (
 )
 
 var logger *log.Logger
-var pub chan VertexInfo
-var sub chan VertexInfo
+var pub = make(chan VertexInfo)
+var sub = make(chan VertexInfo)
 
 type ControlMsg struct {
 	Edge       string
