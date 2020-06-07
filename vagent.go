@@ -127,7 +127,7 @@ func ListenToController(){
 		go handleConnection(conn)
 	}
 }
-func vamain() {
+func Vamain() {
 	logInit()
 	go ListenToEdge()
 	go TransmitToEdge()
