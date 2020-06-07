@@ -54,7 +54,6 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if jerr != nil {
 		return PipeData{}, jerr
 	}
-	fmt.Println(p, pipeName)
 	return p, nil
 }
 
@@ -74,7 +73,6 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 	if wrerr != nil {
 		return wrerr
 	}
-	fmt.Println(b, pipeName)
 	output.Close()
 	return nil
 }
