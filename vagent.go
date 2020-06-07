@@ -1,4 +1,4 @@
-package vertex 
+package vertex
 
 import (
 //	"bufio"
@@ -108,7 +108,6 @@ func logInit() {
 	if err != nil {
 		log.Println(err)
 	}
-	defer f.Close()
 
 	logger = log.New(f, "[INFO]", log.LstdFlags)
 }
@@ -128,20 +127,20 @@ func ListenToController(){
 		go handleConnection(conn)
 	}
 }
-//func main() {
-//	logInit()
-//	go ListenToEdge()
-//	go TransmitToEdge()
-//	go LaunchApp("/pkg/app.go")
-//	go ListenToController()
-//	pub1 := InitVertex(1, 1, "pub")
-//	sub1 := InitVertex(1, 2, "sub")
-//	pubVertex = append(pubVertex, pub1)
-//	subVertex = append(subVertex, sub1)
-//	for {
-//		time.Sleep(10*time.Second)
-//	}
-//}
+func vamain() {
+	logInit()
+	go ListenToEdge()
+	go TransmitToEdge()
+	go LaunchApp("/pkg/app.go")
+	//go ListenToController()
+	pub1 := InitVertex(1, 1, "pub")
+	sub1 := InitVertex(1, 2, "sub")
+	pubVertex = append(pubVertex, pub1)
+	subVertex = append(subVertex, sub1)
+	for {
+		time.Sleep(10*time.Second)
+	}
+}
 
 func handleConnection(conn net.Conn) {
 

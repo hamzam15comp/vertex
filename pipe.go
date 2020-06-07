@@ -1,4 +1,4 @@
-package vertex 
+package vertex
 
 import (
 	"bytes"
@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-//	"path/filepath"
 	"syscall"
 )
 
@@ -17,11 +16,6 @@ type PipeData struct {
 }
 
 func CreatePipe(pipeName string) error {
-	//pwd, pwderr := os.Getwd()
-	//if pwderr != nil {
-	//	return pwderr
-	//}
-	//namedPipe := filepath.Join(pwd, pipeName)
 	mkerr := syscall.Mkfifo(pipeName, 0660)
 	if mkerr != nil && !os.IsExist(mkerr) {
 		return nil
@@ -44,7 +38,6 @@ func CreatePipe(pipeName string) error {
 }
 
 func ReadFromPipe(pipeName string) (PipeData, error) {
-	
 	var buff bytes.Buffer
 	var p PipeData
 	input, operr := os.OpenFile(
@@ -54,14 +47,14 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if operr != nil {
 		return PipeData{}, operr
 	}
-	fmt.Println(pipeName, input)
+	defer input.Close()
 	io.Copy(&buff, input)
 	b := buff.Bytes()
 	jerr := json.Unmarshal(b, &p)
 	if jerr != nil {
 		return PipeData{}, jerr
 	}
-	fmt.Println(p)
+	fmt.Println(p, pipeName)
 	return p, nil
 }
 
@@ -73,6 +66,7 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 	if operr != nil {
 		return operr
 	}
+	defer output.Close()
 	b, jerr := json.Marshal(pdata)
 	if jerr != nil {
 		return jerr
@@ -81,6 +75,7 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 	if wrerr != nil {
 		return wrerr
 	}
+	fmt.Println(b, pipeName)
 	return nil
 }
 

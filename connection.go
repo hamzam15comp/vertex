@@ -1,8 +1,7 @@
-package vertex 
+package vertex
 
 import (
 	"fmt"
-//	"log"
 	"os/exec"
 )
 
@@ -35,7 +34,7 @@ func LaunchApp(appname string) error {
 	CreatePipe(OUT)
 
 	exe := exec.Command("go", "run", appname)
-	err := exe.Start()
+	err := exe.Run()
 	if err != nil {
 		return err
 	}
