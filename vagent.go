@@ -10,6 +10,8 @@ import (
 )
 
 var logger *log.Logger
+var pub chan VertexInfo
+var sub chan VertexInfo
 
 type ControlMsg struct {
 	Edge       string
@@ -26,11 +28,10 @@ var ptest PipeData = PipeData{
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
 
+
 func TransmitToEdge(){
 	for {
-		if len(PubVertex) == 0{
-			continue
-		}
+		PubVertex = append(PubVertex, <-pub)
 		for _, vi := range PubVertex {
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
@@ -79,9 +80,7 @@ func removeVertexInfo(vi VertexInfo, aname string){
 
 func ListenToEdge() {
 	for {
-		if len(SubVertex) == 0 {
-			continue
-		}
+		SubVertex = append(SubVertex, <-sub)
 		for _, vi := range SubVertex {
 			//var p PipeData
 			//p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
@@ -132,10 +131,10 @@ func Vamain() {
 	go TransmitToEdge()
 	//LaunchApp("/pkg/app.go")
 	//go ListenToController()
-	//pub1 := InitVertex(1, 3, "pub")
-	//sub1 := InitVertex(1, 2, "sub")
-	//PubVertex = append(PubVertex, pub1)
-	//SubVertex = append(SubVertex, sub1)
+	pub1 := InitVertex(1, 3, "pub")
+	pub <- pub1
+	sub1 := InitVertex(1, 2, "sub")
+	sub <- sub1
 	for {
 		time.Sleep(10*time.Second)
 	}
