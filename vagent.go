@@ -23,8 +23,8 @@ var ptest PipeData = PipeData{
 	Datatype: "datatype",
 	Data: []byte("data"),
 }
-var SubVertex []VertexInfo = make([]VertexInfo, 128)
-var PubVertex []VertexInfo = make([]VertexInfo, 128)
+var SubVertex = []VertexInfo{}
+var PubVertex = []VertexInfo{}
 
 func TransmitToEdge(){
 	for {
