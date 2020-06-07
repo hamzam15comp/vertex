@@ -1,13 +1,16 @@
-package main
+package vertex 
 
 import (
 	"fmt"
-	"log"
+//	"log"
 	"os/exec"
 )
 
+var IN string = "/tmp/in"
+var OUT string = "/tmp/out"
+
 func ReadData() (string, []byte, error) {
-	pdata, err := ReadFromPipe("in")
+	pdata, err := ReadFromPipe(IN)
 	if err != nil {
 		return "", nil, err
 	}
@@ -20,7 +23,7 @@ func WriteData(sendTo string, datatype string, data []byte) error {
 		Datatype: datatype,
 		Data:     data,
 	}
-	err := WriteToPipe("out", pdata)
+	err := WriteToPipe(OUT, pdata)
 	if err != nil {
 		return fmt.Errorf("Write failed")
 	}
@@ -28,8 +31,8 @@ func WriteData(sendTo string, datatype string, data []byte) error {
 }
 
 func LaunchApp(appname string) error {
-	CreatePipe("in")
-	CreatePipe("out")
+	CreatePipe(IN)
+	CreatePipe(OUT)
 
 	exe := exec.Command("go", "run", appname)
 	err := exe.Start()
