@@ -19,15 +19,15 @@ type ControlMsg struct {
 	Msgid      string
 }
 
-var subVertex = []VertexInfo{}
-var pubVertex = []VertexInfo{}
+var SubVertex = [...]VertexInfo{}
+var PubVertex = [...]VertexInfo{}
 
 func TransmitToEdge(){
 	for {
-		if len(pubVertex) == 0{
+		if len(PubVertex) == 0{
 			continue
 		}
-		for vi := range pubVertex {
+		for vi := range PubVertex {
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -36,23 +36,22 @@ func TransmitToEdge(){
 				continue
 			}
 			logger.Printf("Received from pipe\n")
-			fmt.Printf("%v", pi)
 			fmt.Printf("%v", vi)
-			time.Sleep(10*time.Second)
-			//serr := SendDataEdge(
-			//	vi,
-			//	pi.SendTo,
-			//	pi.Datatype,
-			//	pi.Data,
-			//)
-			//if serr != nil {
-			//	removeVertexInfo(vi, "pub")
-			//	logger.Printf(
-			//		`Send to edge %d failed.
-			//		Closing and deleting connection`,
-			//		vi.edge,
-			//	)
-			//}
+			serr := SendDataEdge(
+				vi,
+				pi.SendTo,
+				pi.Datatype,
+				pi.Data,
+			)
+			if serr != nil {
+				removeVertexInfo(vi, "pub")
+				logger.Printf(
+					`Send to edge %d failed.
+					Closing and deleting connection`,
+					vi.edge,
+				)
+			}
+			time.Sleep(2*time.Second)
 
 		}
 	}
@@ -60,7 +59,7 @@ func TransmitToEdge(){
 }
 
 func removeVertexInfo(vi VertexInfo, aname string){
-	if len(subVertex) == 0 || (aname != "sub" && aname != "pub") {
+	if len(SubVertex) == 0 || (aname != "sub" && aname != "pub") {
 		return
 	}
 	if aname == "sub" {
@@ -75,29 +74,23 @@ func removeVertexInfo(vi VertexInfo, aname string){
 
 func ListenToEdge() {
 	for {
-		if len(subVertex) == 0 {
+		if len(SubVertex) == 0 {
 			continue
 		}
-		for vi := range subVertex {
-			//var p PipeData
-			//p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
-			p := PipeData {
-				SendTo: "all",
-				Datatype: "whatever",
-				Data: []byte("lmao"),
+		for vi := range SubVertex {
+			var p PipeData
+			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
+			if err != nil {
+				removeVertexInfo(vi, "sub")
+				logger.Printf(
+					`Receive from edge %d failed.
+					Closing and deleting connection`,
+					vi.edge,
+				)
 			}
-			//if err != nil {
-			//	removeVertexInfo(vi, "sub")
-			//	logger.Printf(
-			//		`Receive from edge %d failed.
-			//		Closing and deleting connection`,
-			//		vi.edge,
-			//	)
-			//}
 			WriteToPipe(IN, p)
 			logger.Println("Writing data %v to pipe", p)
-			logger.Printf("%v", vi)
-			time.Sleep(10*time.Second)
+			time.Sleep(2*time.Second)
 		}
 	}
 
@@ -133,10 +126,10 @@ func Vamain() {
 	go TransmitToEdge()
 	//LaunchApp("/pkg/app.go")
 	//go ListenToController()
-	pub1 := InitVertex(1, 1, "pub")
+	pub1 := InitVertex(1, 3, "pub")
 	sub1 := InitVertex(1, 2, "sub")
-	pubVertex = append(pubVertex, pub1)
-	subVertex = append(subVertex, sub1)
+	PubVertex = append(PubVertex, pub1)
+	SubVertex = append(SubVertex, sub1)
 	for {
 		time.Sleep(10*time.Second)
 	}
