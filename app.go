@@ -9,4 +9,7 @@ import(
 
 func main() {
 
-	datatype, data, err := exec.ReadData()
+	datatype, data, err := connection.ReadData()
+	fmt.Println(datatype, data)
+
+}

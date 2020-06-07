@@ -1,4 +1,4 @@
-package pipe 
+package vertex 
 
 import (
 	"bytes"
