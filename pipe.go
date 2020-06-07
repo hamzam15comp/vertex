@@ -66,7 +66,6 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 	if operr != nil {
 		return operr
 	}
-	defer output.Close()
 	b, jerr := json.Marshal(pdata)
 	if jerr != nil {
 		return jerr
@@ -76,6 +75,7 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 		return wrerr
 	}
 	fmt.Println(b, pipeName)
+	output.Close()
 	return nil
 }
 
