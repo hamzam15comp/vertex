@@ -7,7 +7,6 @@ import (
 	"net"
 	"os"
 
-	"github.com/hamzam/vertex"
 	"github.com/streadway/amqp"
 )
 

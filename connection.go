@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"os/exec"
-	"github.com/hamzam15comp/vertex"
 
 )
 
