@@ -34,7 +34,7 @@ func LaunchApp(appname string) error {
 	CreatePipe(OUT)
 
 	exe := exec.Command("go", "run", appname)
-	err := exe.Run()
+	err := exec.Start()
 	if err != nil {
 		return err
 	}
