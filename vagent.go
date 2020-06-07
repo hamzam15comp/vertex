@@ -132,8 +132,8 @@ func Vamain() {
 	go TransmitToEdge()
 	//LaunchApp("/pkg/app.go")
 	//go ListenToController()
-	pub1 := InitVertex(1, 3, "pub")
-	sub1 := InitVertex(1, 2, "sub")
+	//pub1 := InitVertex(1, 3, "pub")
+	//sub1 := InitVertex(1, 2, "sub")
 	//PubVertex = append(PubVertex, pub1)
 	//SubVertex = append(SubVertex, sub1)
 	for {
