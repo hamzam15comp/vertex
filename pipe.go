@@ -6,7 +6,7 @@ import (
 //	"fmt"
 	"io"
 	"os"
-	"path/filepath"
+//	"path/filepath"
 	"syscall"
 )
 
@@ -17,12 +17,12 @@ type PipeData struct {
 }
 
 func CreatePipe(pipeName string) error {
-	pwd, pwderr := os.Getwd()
-	if pwderr != nil {
-		return pwderr
-	}
-	namedPipe := filepath.Join(pwd, pipeName)
-	mkerr := syscall.Mkfifo(namedPipe, 0660)
+	//pwd, pwderr := os.Getwd()
+	//if pwderr != nil {
+	//	return pwderr
+	//}
+	//namedPipe := filepath.Join(pwd, pipeName)
+	mkerr := syscall.Mkfifo(pipeName, 0660)
 	if mkerr != nil && !os.IsExist(mkerr) {
 		return nil
 	}
