@@ -3,7 +3,6 @@ package vertex
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io"
 	"os"
 	"syscall"
