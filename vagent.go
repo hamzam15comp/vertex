@@ -2,7 +2,7 @@ package vertex
 
 import (
 //	"bufio"
-	"fmt"
+//	"fmt"
 	"log"
 	"net"
 	"os"
@@ -94,7 +94,7 @@ func ListenToEdge() {
 		}
 		for _, vi := range SubVertex {
 			var p PipeData
-			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
+			p.Datatype, p.Data, err := ReceiveDataEdge(vi, true)
 			if err != nil {
 				removeVertexInfo(vi, "sub")
 				logger.Printf(
