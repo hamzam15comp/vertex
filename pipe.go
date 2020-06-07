@@ -3,7 +3,7 @@ package vertex
 import (
 	"bytes"
 	"encoding/json"
-//	"fmt"
+	"fmt"
 	"io"
 	"os"
 //	"path/filepath"
@@ -59,6 +59,7 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if jerr != nil {
 		return PipeData{}, jerr
 	}
+	fmt.Println(p)
 	return p, nil
 }
 
