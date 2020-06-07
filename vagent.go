@@ -94,7 +94,8 @@ func ListenToEdge() {
 		}
 		for _, vi := range SubVertex {
 			var p PipeData
-			p.Datatype, p.Data, err := ReceiveDataEdge(vi, true)
+			var err error
+			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
 				removeVertexInfo(vi, "sub")
 				logger.Printf(
