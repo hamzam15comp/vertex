@@ -26,7 +26,7 @@ func CreatePipe(pipeName string) error {
 	if mkerr != nil && !os.IsExist(mkerr) {
 		return nil
 	}
-	f, operr := os.OpenFile(pipeName, os.O_RDWR, 0660)
+	f, operr := os.OpenFile(pipeName, os.O_WRONLY, 0660)
 	if operr != nil {
 		return operr
 	}
