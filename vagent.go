@@ -40,6 +40,7 @@ func TransmitToEdge(){
 				continue
 			}
 			logger.Printf("Received from pipe\n")
+			fmt.Println(pi)
 			fmt.Println(vi)
 			//serr := SendDataEdge(
 			//	vi,
