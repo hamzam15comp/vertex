@@ -1,19 +1,47 @@
-package vertex
+package main
 
 import (
 	"fmt"
-	"io/ioutil"
+	"log"
 	"os/exec"
-
 )
 
-func main() {
-
-	lsCmd := exec.Command("bash", "-c", "ls -a -l -h")
-	lsOut, err := lsCmd.Output()
+func ReadData() (string, []byte, error) {
+	pdata, err := ReadFromPipe("in")
 	if err != nil {
-		panic(err)
+		return "", nil, err
 	}
-	fmt.Println("> ls -a -l -h")
-	fmt.Println(string(lsOut))
+	return pdata.Datatype, pdata.Data, nil
 }
+
+func WriteData(sendTo string, datatype string, data []byte) error {
+	pdata := PipeData{
+		SendTo:   sendTo,
+		Datatype: datatype,
+		Data:     data,
+	}
+	err := WriteToPipe("out", pdata)
+	if err != nil {
+		return fmt.Errorf("Write failed")
+	}
+	return nil
+}
+
+func LaunchApp(appname string) error {
+	CreatePipe("in")
+	CreatePipe("out")
+
+	exe := exec.Command("go", "run", appname)
+	err := exe.Start()
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+//func main() {
+//	err := LaunchApp()
+//	if err != nil {
+//		log.Fatal(err)
+//	}
+//}

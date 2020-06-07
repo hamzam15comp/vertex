@@ -1,60 +1,92 @@
-package vertex 
+package main 
 
 import (
 	"bytes"
-	"io"
 	"encoding/json"
-	"fmt"
-	"log"
-	"time"
+//	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 	"syscall"
-
 )
 
 type PipeData struct {
-	SendTo   string	`json:"sendto"`
+	SendTo   string `json:"sendto"`
 	Datatype string `json:"datatype"`
 	Data     []byte `json:"data"`
 }
 
-func createPipe(pipeName string) {
-	pwd, err := os.Getwd()
-	if err != nil {
-		log.Fatal(err)
+func CreatePipe(pipeName string) error {
+	pwd, pwderr := os.Getwd()
+	if pwderr != nil {
+		return pwderr
 	}
 	namedPipe := filepath.Join(pwd, pipeName)
-	syscall.Mkfifo(namedPipe, 0600)
+	mkerr := syscall.Mkfifo(namedPipe, 0660)
+	if mkerr != nil && !os.IsExist(mkerr) {
+		return nil
+	}
+	f, operr := os.OpenFile(pipeName, os.O_RDWR, 0660)
+	if operr != nil {
+		return operr
+	}
+	// In case we're using a pre-made file, check that it's actually a FIFO
+	fi, ferr := f.Stat()
+	if ferr != nil {
+		f.Close()
+		return ferr
+	}
+	if fi.Mode()&os.ModeType != os.ModeNamedPipe {
+		f.Close()
+		return os.ErrExist
+	}
+	return nil
 }
-func readFromPipe(pipeName string) PipeData {
+
+func ReadFromPipe(pipeName string) (PipeData, error) {
 	var buff bytes.Buffer
 	var p PipeData
-	input, _ := os.OpenFile(
+	input, operr := os.OpenFile(
 		pipeName,
 		os.O_RDONLY,
 		os.ModeNamedPipe)
+	if operr != nil {
+		return PipeData{}, operr
+	}
 	io.Copy(&buff, input)
 	b := buff.Bytes()
-	err := json.Unmarshal(b, &p)
-	if err != nil {
-		log.Fatal(err)
+	jerr := json.Unmarshal(b, &p)
+	if jerr != nil {
+		return PipeData{}, jerr
 	}
-	return p
+	return p, nil
 }
 
-func writeToPipe(pipeName string, pdata PipeData) {
-	time.Sleep(5*time.Second)
-	output, _ := os.OpenFile(pipeName, os.O_RDWR, 0600)
-	b, err := json.Marshal(pdata)
-	if err != nil {
-		log.Fatal(err)
+func WriteToPipe(pipeName string, pdata PipeData) error {
+	output, operr := os.OpenFile(
+		pipeName,
+		os.O_RDWR,
+		os.ModeNamedPipe)
+	if operr != nil {
+		return operr
 	}
-	output.Write(b)
+	b, jerr := json.Marshal(pdata)
+	if jerr != nil {
+		return jerr
+	}
+	_, wrerr := output.Write(b)
+	if wrerr != nil {
+		return wrerr
+	}
+	return nil
 }
 
 //func main() {
-//	createPipe("in")
-//	pi := readFromPipe("in")
+//	CreatePipe("in")
+//	pi, perr := ReadFromPipe("in")
+//	if perr != nil {
+//		fmt.Println(perr)
+//		return
+//	}
 //	fmt.Printf("%v", pi)
 //}

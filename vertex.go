@@ -1,4 +1,4 @@
-package vertex
+package main
 
 import (
 	"fmt"
