@@ -56,8 +56,12 @@ var ptest PipeData = PipeData{
 }
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
-var stop = make(chan time.Duration)
-var done = make(chan bool)
+var stopp = make(chan time.Duration)
+var donep = make(chan bool)
+var stops = make(chan time.Duration)
+var stops = make(chan time.Duration)
+var doneg = make(chan bool)
+var doneg = make(chan bool)
 
 func TransmitToEdge(){
 	for {
@@ -71,13 +75,13 @@ func TransmitToEdge(){
 		}
 		for i, vi := range PubVertex {
 			select {
-				case s := <-stop:
+				case s := <-stopp:
 					for {
 						logger.Println(
 						"Waiting to Publish",
 						)
 						time.Sleep(s*time.Second)
-						if <-done {
+						if <-donep {
 							break
 						}
 					}
@@ -131,13 +135,13 @@ func ListenToEdge() {
 		}
 		for i, vi := range SubVertex {
 			select {
-				case s := <-stop:
+				case s := <-stops:
 					for {
 						logger.Println(
 						"Waiting to Subscribe",
 						)
 						time.Sleep(s*time.Second)
-						if <-done {
+						if <-dones {
 							break
 						}
 					}
@@ -192,7 +196,6 @@ func ListenToController(){
 	}
 }
 
-var exslice = []byte{'a', 'b', 'c', 'd', 'e'}
 
 func Vamain() {
 	logInit()
@@ -204,10 +207,12 @@ func Vamain() {
 		SendToVagent(pubadd11msg)
 		SendToVagent(subadd11msg)
 		time.Sleep(10*time.Second)
-		//SendToVagent(pubrem11msg)
+		SendToVagent(pubrem11msg)
 		//SendToVagent(subrem11msg)
 	}
 }
+
+
 func SendToVagent(cmsg ControlMsg) {
 	host := "localhost:7000"
 	con, err := net.Dial("tcp", host)
@@ -224,7 +229,9 @@ func SendToVagent(cmsg ControlMsg) {
 
 
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
-	stop <- 5
+	stops <- 5
+	stopp <- 5
+	stopg <- 5
 	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return []VertexInfo{}
@@ -232,20 +239,22 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice[vi] = vertexSlice[vlen-1]
 	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
-	done <- true 
+	dones <- true
+	donep <- true
+	doneg <- true
 	return vertexSlice
 }
 
 
 func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error) {
 	select {
-		case s := <-stop:
+		case s := <-stopg:
 			for {
 				logger.Println(
 				"Waiting to Remove",
 				)
 				time.Sleep(s*time.Second)
-				if <-done {
+				if <-doneg {
 					break
 				}
 			}
