@@ -21,7 +21,7 @@ type ControlMsg struct {
 	Cmd        string
 	Msgid      string
 }
-var testmsg ControlMsg = ControlMsg{
+var testcmsg ControlMsg = ControlMsg{
 	Edge: "edge1",
 	Vertexno: "1",
 	Vertextype: "pub",
@@ -77,6 +77,7 @@ func TransmitToEdge(){
 }
 
 func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
+'''
 	vlen := len(*vertexSlice)
 	if vlen == 0 {
 		return
@@ -84,7 +85,9 @@ func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
 	*vertexSlice[vi] = *vertexSlice[vlen-1]
 	*vertexSlice[vlen-1] = ""
 	*vertexSlice = *vertexSlice[:vlen-1]
+'''
 }
+
 
 func FindInSlice(slice []VertexInfo, val VertexInfo) (int, bool) {
         for i, item := range slice {
