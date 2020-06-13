@@ -77,7 +77,7 @@ func TransmitToEdge(){
 }
 
 func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
-'''
+/*
 	vlen := len(*vertexSlice)
 	if vlen == 0 {
 		return
@@ -85,7 +85,7 @@ func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
 	*vertexSlice[vi] = *vertexSlice[vlen-1]
 	*vertexSlice[vlen-1] = ""
 	*vertexSlice = *vertexSlice[:vlen-1]
-'''
+*/
 }
 
 
