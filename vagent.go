@@ -134,7 +134,7 @@ func ListenToEdge() {
 				case s := <-stop:
 					for {
 						logger.Println(
-						"Waiting to Publish",
+						"Waiting to Subscribe",
 						)
 						time.Sleep(s*time.Second)
 						if <-done {
@@ -204,8 +204,8 @@ func Vamain() {
 		SendToVagent(pubadd11msg)
 		SendToVagent(subadd11msg)
 		time.Sleep(10*time.Second)
-		SendToVagent(pubrem11msg)
-		SendToVagent(subrem11msg)
+		//SendToVagent(pubrem11msg)
+		//SendToVagent(subrem11msg)
 	}
 }
 func SendToVagent(cmsg ControlMsg) {
@@ -238,6 +238,22 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 
 
 func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error) {
+	select {
+		case s := <-stop:
+			for {
+				logger.Println(
+				"Waiting to Remove",
+				)
+				time.Sleep(s*time.Second)
+				if <-done {
+					break
+				}
+			}
+			continue
+		default: {
+			break
+		}
+	}
 	if len(vslice) == 0 {
 		return -1, VertexInfo{}, fmt.Errorf("Slice empty")
 	}
