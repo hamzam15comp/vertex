@@ -21,18 +21,32 @@ type ControlMsg struct {
 	Msgid      int
 }
 
-var pub21msg ControlMsg = ControlMsg{
-	Edge: 2,
+var pubadd11msg ControlMsg = ControlMsg{
+	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "pub",
 	Cmd:	"add",
 	Msgid: 124,
 }
-var sub11msg ControlMsg = ControlMsg{
+var subadd11msg ControlMsg = ControlMsg{
 	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "sub",
 	Cmd:	"add",
+	Msgid: 124,
+}
+var pubrem11msg ControlMsg = ControlMsg{
+	Edge: 1,
+	Vertexno: 1,
+	Vertextype: "pub",
+	Cmd:	"rem",
+	Msgid: 124,
+}
+var subrem11msg ControlMsg = ControlMsg{
+	Edge: 1,
+	Vertexno: 1,
+	Vertextype: "sub",
+	Cmd:	"rem",
 	Msgid: 124,
 }
 var ptest PipeData = PipeData{
@@ -154,9 +168,11 @@ func Vamain() {
 	//LaunchApp("/pkg/app.go")
 	go ListenToController()
 	for {
-		SendToVagent(pub21msg)
-		SendToVagent(sub11msg)
+		SendToVagent(pubadd11msg)
+		SendToVagent(subadd11msg)
 		time.Sleep(10*time.Second)
+		SendToVagent(pubrem11msg)
+		SendToVagent(subrem11msg)
 	}
 }
 func SendToVagent(cmsg ControlMsg) {
