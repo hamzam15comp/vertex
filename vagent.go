@@ -208,7 +208,7 @@ func Vamain() {
 		SendToVagent(subadd11msg)
 		time.Sleep(10*time.Second)
 		SendToVagent(pubrem11msg)
-		//SendToVagent(subrem11msg)
+		SendToVagent(subrem11msg)
 	}
 }
 
@@ -242,6 +242,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	dones <- true
 	donep <- true
 	doneg <- true
+	fmt.Println(vertexSlice)
 	return vertexSlice
 }
 
@@ -301,6 +302,8 @@ func addConnection(cmsg ControlMsg) {
 			logger.Println("Vertex already exists")
 		}
 	}
+	fmt.Println(SubVertex)
+	fmt.Println(PubVertex)
 }
 
 func remConnection(cmsg ControlMsg){
