@@ -239,9 +239,6 @@ func SendToVagent(cmsg ControlMsg) {
 
 
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
-	stops <- 2
-	stopp <- 2
-	//stopg <- 2
 	vert := vertexSlice[vi]
 	vert.conn.Close()
 	vert.channel.Close()
@@ -252,9 +249,6 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice[vi] = vertexSlice[vlen-1]
 	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
-	dones <- true
-	donep <- true
-	//doneg <- true
 	fmt.Println("removed:\n",vertexSlice)
 	return vertexSlice
 }
@@ -323,19 +317,25 @@ func addConnection(cmsg ControlMsg) {
 }
 
 func remConnection(cmsg ControlMsg){
-	i, _, _ := getVertexInfo(cmsg, SubVertex)
-	if i != -1 {
-		SubVertex = removeVertexInfo(i, SubVertex)
+	stops <- 2
+	stopp <- 2
+	if cmsg.Vertextype == "sub" {
+		i, _, _ := getVertexInfo(cmsg, SubVertex)
+		if i != -1 {
+			SubVertex = removeVertexInfo(i, SubVertex)
+		} else {
+			logger.Println("Vertex not found SubVertex")
+		}
 	} else {
-		logger.Println("Vertex not found SubVertex")
+		i, _, _ = getVertexInfo(cmsg, PubVertex)
+		if i != -1 {
+			SubVertex = removeVertexInfo(i, PubVertex)
+		} else {
+			logger.Println("Vertex not found in PubVertex")
+		}
 	}
-	i, _, _ = getVertexInfo(cmsg, PubVertex)
-	if i != -1 {
-		SubVertex = removeVertexInfo(i, PubVertex)
-	} else {
-		logger.Println("Vertex not found in PubVertex")
-	}
-
+	dones <- true
+	donep <- true
 }
 
 func handleController(conn net.Conn) {
