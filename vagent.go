@@ -78,7 +78,7 @@ func TransmitToEdge(){
 				)
 				break
 			}
-			fmt.Println(vi)
+			fmt.Println("Sending to Edge", pi)
 			time.Sleep(10*time.Second)
 
 		}
@@ -112,7 +112,7 @@ func ListenToEdge() {
 				break
 			}
 			WriteToPipe(IN, p)
-			fmt.Println(vi)
+			fmt.Println("Received from Edge", p)
 			time.Sleep(10*time.Second)
 			logger.Println("Writing data %v to pipe", p)
 		}
