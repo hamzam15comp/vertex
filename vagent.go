@@ -59,8 +59,8 @@ var PubVertex = []VertexInfo{}
 var stopp = make(chan time.Duration)
 var donep = make(chan bool)
 var stops = make(chan time.Duration)
-var stops = make(chan time.Duration)
-var doneg = make(chan bool)
+var stopg = make(chan time.Duration)
+var dones = make(chan bool)
 var doneg = make(chan bool)
 
 func TransmitToEdge(){
