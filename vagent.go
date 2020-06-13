@@ -77,7 +77,7 @@ func TransmitToEdge(){
 						"Waiting to Publish",
 						)
 						time.Sleep(s*time.Second)
-						if <-done:{
+						if <-done {
 							break
 						}
 					}
@@ -137,7 +137,7 @@ func ListenToEdge() {
 						"Waiting to Publish",
 						)
 						time.Sleep(s*time.Second)
-						if <-done:{
+						if <-done {
 							break
 						}
 					}
