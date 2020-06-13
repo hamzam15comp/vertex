@@ -56,8 +56,8 @@ var ptest PipeData = PipeData{
 }
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
-var stop = make(chan int)
-var done = make(chan int)
+var stop = make(chan time.Duration)
+var done = make(chan bool)
 
 func TransmitToEdge(){
 	for {
@@ -232,7 +232,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice[vi] = vertexSlice[vlen-1]
 	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
-	done <- 1
+	done <- true 
 	return vertexSlice
 }
 
