@@ -2,7 +2,8 @@ package vertex
 
 import (
 //	"bufio"
-//	"fmt"
+	"fmt"
+	"encoding/json"
 	"log"
 	"net"
 	"os"
@@ -19,6 +20,13 @@ type ControlMsg struct {
 	Vertextype string
 	Cmd        string
 	Msgid      string
+}
+var testmsg ControlMsg = ControlMsg{
+	Edge: "edge1",
+	Vertexno: "1",
+	Vertextype: "pub",
+	Cmd:	"add",
+	Msgid: "124",
 }
 var ptest PipeData = PipeData{
 	SendTo: "all",
@@ -39,7 +47,7 @@ func TransmitToEdge(){
 					continue
 				}
 		}
-		for _, vi := range PubVertex {
+		for i, vi := range PubVertex {
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -55,7 +63,7 @@ func TransmitToEdge(){
 				pi.Data,
 			)
 			if serr != nil {
-				removeVertexInfo(vi, "pub")
+				removeVertexInfo(i, &PubVertex)
 				logger.Printf(
 					`Send to edge %d failed.
 					Closing and deleting connection`,
@@ -68,20 +76,24 @@ func TransmitToEdge(){
 
 }
 
-func removeVertexInfo(vi VertexInfo, aname string){
-	if len(SubVertex) == 0 || (aname != "sub" && aname != "pub") {
+func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
+	vlen := len(*vertexSlice)
+	if vlen == 0 {
 		return
 	}
-	if aname == "sub" {
-
-
-	} else {
-
-
-
-	}
+	*vertexSlice[vi] = *vertexSlice[vlen-1]
+	*vertexSlice[vlen-1] = ""
+	*vertexSlice = *vertexSlice[:vlen-1]
 }
 
+func FindInSlice(slice []VertexInfo, val VertexInfo) (int, bool) {
+        for i, item := range slice {
+                if item == val {
+                        return i, true
+                }
+        }
+        return -1, false
+}
 func ListenToEdge() {
 	for {
 		select {
@@ -92,12 +104,12 @@ func ListenToEdge() {
 					continue
 				}
 		}
-		for _, vi := range SubVertex {
+		for i, vi := range SubVertex {
 			var p PipeData
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
-				removeVertexInfo(vi, "sub")
+				removeVertexInfo(i, &SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
 					Closing and deleting connection`,
@@ -123,47 +135,50 @@ func logInit() {
 func ListenToController(){
 	listener, err := net.Listen("tcp", "0.0.0.0:7000")
 	if err != nil {
-		logger.Fatal("tcp server listener error:", err)
+		logger.Println("tcp server listener error:", err)
 	}
 
 	for {
 		conn, err := listener.Accept()
 		if err != nil {
-			logger.Fatal("tcp server accept error", err)
+			logger.Println("tcp server accept error", err)
 		}
 
-		go handleConnection(conn)
+		go handleController(conn)
 	}
 }
+
 func Vamain() {
 	logInit()
 	go ListenToEdge()
 	go TransmitToEdge()
 	//LaunchApp("/pkg/app.go")
-	//go ListenToController()
-	pub1 := InitVertex(1, 3, "pub")
-	pub <- pub1
-	sub1 := InitVertex(1, 2, "sub")
-	sub <- sub1
+	go ListenToController()
 	for {
 		time.Sleep(10*time.Second)
+		SendToVagent(testcmsg)
 	}
 }
+func SendToVagent(cmsg ControlMsg) {
+	host := "localhost:7000"
+	con, err := net.Dial("tcp", host)
+	enc := json.NewEncoder(con)
+	err = enc.Encode(cmsg)
+	fmt.Println(err)
+	defer con.Close()
+}
+func addConnection(cmsg ControlMsg) {
 
-func handleConnection(conn net.Conn) {
+}
 
+func delConnection(cmsg ControlMsg){
 
-	//bufferBytes, err := bufis.NewReader(conn).ReadBytes('\n')
-
-	//if err != nil {
-	//	logger.Println("client left..")
-	//	conn.Close()
-	//	return
-	//}
-
-	//message := string(bufferBytes)
-	//clientAddr := conn.RemoteAddr().String()
-
-	//conn.Write([]byte("you sent: " + response))
+}
+func handleController(conn net.Conn) {
+	dec := json.NewDecoder(conn)
+	var cmsg ControlMsg
+	err := dec.Decode(&cmsg)
+	fmt.Println(cmsg, err)
+	conn.Close()
 
 }
