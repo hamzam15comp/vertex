@@ -86,7 +86,6 @@ func TransmitToEdge(){
 							break
 						}
 					}
-					continue
 				default: {
 					break
 				}
@@ -147,7 +146,6 @@ func ListenToEdge() {
 							break
 						}
 					}
-					continue
 				default: {
 					break
 				}
@@ -276,6 +274,7 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 	}
 	for i, vi := range(vslice){
 		if vi.edge == cmsg.Edge && vi.vertexno == cmsg.Vertexno {
+			fmt.Println("GetVertexInfo returns: ", vi)
 			return i, vi, nil
 		}
 	}
@@ -285,9 +284,9 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 
 func addConnection(cmsg ControlMsg) {
 	if cmsg.Vertextype == "pub" {
-		i, vi, _ := getVertexInfo(cmsg, PubVertex)
+		i, _ , _ := getVertexInfo(cmsg, PubVertex)
 		if i == -1 {
-			vi = InitVertex(
+			vi := InitVertex(
 				cmsg.Edge,
 				cmsg.Vertexno,
 				"pub",
@@ -298,13 +297,14 @@ func addConnection(cmsg ControlMsg) {
 		}
 	}
 	if cmsg.Vertextype == "sub" {
-		i, vi, _ := getVertexInfo(cmsg, SubVertex)
+		i, _ , _ := getVertexInfo(cmsg, SubVertex)
 		if i == -1 {
-			vi = InitVertex(
+			vi := InitVertex(
 				cmsg.Edge,
 				cmsg.Vertexno,
 				"sub",
 			)
+			fmt.Println("Created vertex: ", vi)
 			sub <- vi
 		} else {
 			logger.Println("Vertex already exists")
