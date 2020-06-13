@@ -1,7 +1,6 @@
 package vertex
 
 import (
-//	"bufio"
 	"fmt"
 	"encoding/json"
 	"log"
@@ -15,16 +14,24 @@ var pub = make(chan VertexInfo)
 var sub = make(chan VertexInfo)
 
 type ControlMsg struct {
-	Edge       string
-	Vertexno   string
+	Edge       int
+	Vertexno   int
 	Vertextype string
 	Cmd        string
-	Msgid      string
+	Msgid      int
 }
-var testcmsg ControlMsg = ControlMsg{
-	Edge: "edge1",
-	Vertexno: "1",
+
+var pub21msg ControlMsg = ControlMsg{
+	Edge: 2,
+	Vertexno: 1,
 	Vertextype: "pub",
+	Cmd:	"add",
+	Msgid: "124",
+}
+var sub11msg ControlMsg = ControlMsg{
+	Edge: 1,
+	Vertexno: 1,
+	Vertextype: "sub",
 	Cmd:	"add",
 	Msgid: "124",
 }
@@ -63,40 +70,23 @@ func TransmitToEdge(){
 				pi.Data,
 			)
 			if serr != nil {
-				fmt.Println(i)
-				//removeVertexInfo(i, PubVertex)
+				PubVertex = removeVertexInfo(i, PubVertex)
 				logger.Printf(
 					`Send to edge %d failed.
 					Closing and deleting connection`,
 					vi.edge,
 				)
+				break
 			}
+			fmt.Println(vi)
+			time.Sleep(10*time.Second)
 
 		}
 	}
 
 }
 
-func removeVertexInfo(vi int, vertexSlice []byte) ([]byte){ //[]VertexInfo){
-	vlen := len(vertexSlice)
-	if vlen == 0 {
-		return []byte{}
-	}
-	vertexSlice[vi] = vertexSlice[vlen-1]
-	vertexSlice[vlen-1] = 0 
-	vertexSlice = vertexSlice[:vlen-1]
-	return vertexSlice
-}
 
-
-func FindInSlice(slice []VertexInfo, val VertexInfo) (int, bool) {
-        for i, item := range slice {
-                if item == val {
-                        return i, true
-                }
-        }
-        return -1, false
-}
 
 func ListenToEdge() {
 	for {
@@ -113,15 +103,17 @@ func ListenToEdge() {
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
-				fmt.Println(i)
-				//removeVertexInfo(i, SubVertex)
+				SubVertex = removeVertexInfo(i, SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
 					Closing and deleting connection`,
 					vi.edge,
 				)
+				break
 			}
 			WriteToPipe(IN, p)
+			fmt.Println(vi)
+			time.Sleep(10*time.Second)
 			logger.Println("Writing data %v to pipe", p)
 		}
 	}
@@ -162,11 +154,9 @@ func Vamain() {
 	//LaunchApp("/pkg/app.go")
 	go ListenToController()
 	for {
+		SendToVagent(pub21msg)
+		SendToVagent(sub11msg)
 		time.Sleep(10*time.Second)
-		SendToVagent(testcmsg)
-		fmt.Println(exslice)
-		exslice = removeVertexInfo(2, exslice)
-		fmt.Println(exslice)
 	}
 }
 func SendToVagent(cmsg ControlMsg) {
@@ -182,13 +172,84 @@ func SendToVagent(cmsg ControlMsg) {
 	}
 	defer con.Close()
 }
+
+
+func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
+	vlen := len(vertexSlice)
+	if vlen == 0 {
+		return []VertexInfo{}
+	}
+	vertexSlice[vi] = vertexSlice[vlen-1]
+	vertexSlice[vlen-1] = nil
+	vertexSlice = vertexSlice[:vlen-1]
+	return vertexSlice
+}
+
+
+func getVertexInfo(
+	cmsg ControlMsg,
+	vslice VertexInfo[]) (int, VertexInfo, error) {
+	if len(vslice) == 0 {
+		return -1, VertexInfo{}, log.Errorf("Slice empty")
+	}
+	for i, vi := range(vslice){
+		if vi.edge == cmd.edge && vi.vertexno == cmsg.Vertexno {
+			return i, vi, nil
+		}
+	}
+	return -1, VertexInfo{}, log.Errorf("Not Found")
+}
+
+
 func addConnection(cmsg ControlMsg) {
+	if cmsg.Vertextype == "pub" {
+		i, vi := getVertexInfo(cmsg, PubVertex)
+		if i == -1 {
+			vi = InitVertex(
+				cmsg.edge,
+				cmsg.Vertexno,
+				"pub",
+			)
+			pub <- vi
+		}
+		else {
+			logger.Println("Vertex already exists")
+		}
+	}
+	if cmsg.Vertextype == "sub" {
+		i, vi := getVertexInfo(cmsg, SubVertex)
+		if i == -1 {
+			vi = InitVertex(
+				cmsg.edge,
+				cmsg.Vertexno,
+				"sub",
+			)
+			sub <- vi
+		}
+		else {
+			logger.Println("Vertex already exists")
+		}
+	}
+}
+
+func remConnection(cmsg ControlMsg){
+	i, _ := getVertexInfo(cmsg, SubVertex)
+	if i != -1 {
+		SubVertex = removeVertexInfo(i, SubVertex)
+	}
+	else {
+		logger.Println("Vertex not found SubVertex")
+	}
+	i, _ := getVertexInfo(cmsg, PubVertex)
+	if i != -1 {
+		SubVertex = removeVertexInfo(i, PubVertex)
+	}
+	else {
+		logger.Println("Vertex not found in PubVertex")
+	}
 
 }
 
-func delConnection(cmsg ControlMsg){
-
-}
 func handleController(conn net.Conn) {
 	dec := json.NewDecoder(conn)
 	var cmsg ControlMsg
@@ -196,7 +257,12 @@ func handleController(conn net.Conn) {
 	if err != nil {
 		logger.Println(err)
 	}
-	fmt.Println(cmsg)
+	if cmsg.Cmd == "add" {
+		addConnection(cmsg)
+	}
+	if cmsg.Cmd == "rem" {
+		remConnection(cmsg)
+	}
 	defer conn.Close()
 
 }
