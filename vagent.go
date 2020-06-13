@@ -233,9 +233,12 @@ func SendToVagent(cmsg ControlMsg) {
 
 
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
-	stops <- 5
-	stopp <- 5
-	stopg <- 5
+	stops <- 2
+	stopp <- 2
+	//stopg <- 2
+	vert := vertexSlice[vi]
+	vi.conn.Close()
+	vi.channel.Close()
 	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return []VertexInfo{}
@@ -245,29 +248,29 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice = vertexSlice[:vlen-1]
 	dones <- true
 	donep <- true
-	doneg <- true
+	//doneg <- true
 	fmt.Println("removed:\n",vertexSlice)
 	return vertexSlice
 }
 
 
 func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error) {
-	select {
-		case s := <-stopg:
-			for {
-				logger.Println(
-				"Waiting to Remove",
-				)
-				time.Sleep(s*time.Second)
-				done := <-doneg
-				if done {
-					break
-				}
-			}
-		default: {
-			break
-		}
-	}
+	//select {
+	//	case s := <-stopg:
+	//		for {
+	//			logger.Println(
+	//			"Waiting to Remove",
+	//			)
+	//			time.Sleep(s*time.Second)
+	//			done := <-doneg
+	//			if done {
+	//				break
+	//			}
+	//		}
+	//	default: {
+	//		break
+	//	}
+	//}
 	if len(vslice) == 0 {
 		return -1, VertexInfo{}, fmt.Errorf("Slice empty")
 	}
