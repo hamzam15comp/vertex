@@ -201,7 +201,7 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 
 func addConnection(cmsg ControlMsg) {
 	if cmsg.Vertextype == "pub" {
-		i, vi, err := getVertexInfo(cmsg, PubVertex)
+		i, vi, _ := getVertexInfo(cmsg, PubVertex)
 		if i == -1 {
 			vi = InitVertex(
 				cmsg.Edge,
@@ -214,7 +214,7 @@ func addConnection(cmsg ControlMsg) {
 		}
 	}
 	if cmsg.Vertextype == "sub" {
-		i, vi, err := getVertexInfo(cmsg, SubVertex)
+		i, vi, _ := getVertexInfo(cmsg, SubVertex)
 		if i == -1 {
 			vi = InitVertex(
 				cmsg.Edge,
@@ -229,13 +229,13 @@ func addConnection(cmsg ControlMsg) {
 }
 
 func remConnection(cmsg ControlMsg){
-	i, _, err := getVertexInfo(cmsg, SubVertex)
+	i, _, _ := getVertexInfo(cmsg, SubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, SubVertex)
 	} else {
 		logger.Println("Vertex not found SubVertex")
 	}
-	i, _, err = getVertexInfo(cmsg, PubVertex)
+	i, _, _ = getVertexInfo(cmsg, PubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, PubVertex)
 	} else {
