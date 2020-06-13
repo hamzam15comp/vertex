@@ -81,7 +81,8 @@ func TransmitToEdge(){
 						"Waiting to Publish",
 						)
 						time.Sleep(s*time.Second)
-						if <-donep {
+						done := <-donep
+						if done {
 							break
 						}
 					}
@@ -142,7 +143,6 @@ func ListenToEdge() {
 						)
 						time.Sleep(s*time.Second)
 						done := <-dones
-						fmt.Println(done)
 						if done {
 							break
 						}
@@ -259,7 +259,8 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 				"Waiting to Remove",
 				)
 				time.Sleep(s*time.Second)
-				if <-doneg {
+				done := <-doneg
+				if <-done {
 					break
 				}
 			}
