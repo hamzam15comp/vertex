@@ -76,13 +76,13 @@ func TransmitToEdge(){
 
 }
 
-func removeVertexInfo(vi int, vertexSlice []VertexInfo){
+func removeVertexInfo(vi int, vertexSlice []byte){ //[]VertexInfo){
 	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return
 	}
 	vertexSlice[vi] = vertexSlice[vlen-1]
-	vertexSlice[vlen-1] = ""
+	vertexSlice[vlen-1] = nil 
 	vertexSlice = vertexSlice[:vlen-1]
 }
 
@@ -162,7 +162,7 @@ func Vamain() {
 		time.Sleep(10*time.Second)
 		SendToVagent(testcmsg)
 		fmt.Println(exslice)
-		removeFromSlice(2, exslice)
+		removeVertexInfo(2, exslice)
 		fmt.Println(exslice)
 	}
 }
