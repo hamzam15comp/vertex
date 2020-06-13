@@ -150,7 +150,8 @@ func ListenToController(){
 	}
 }
 
-var exslice []byte{'a', 'b', 'c', 'd', 'e'}
+var exslice = []byte{'a', 'b', 'c', 'd', 'e'}
+
 func Vamain() {
 	logInit()
 	go ListenToEdge()
