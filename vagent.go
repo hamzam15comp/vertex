@@ -209,8 +209,7 @@ func addConnection(cmsg ControlMsg) {
 				"pub",
 			)
 			pub <- vi
-		}
-		else {
+		} else {
 			logger.Println("Vertex already exists")
 		}
 	}
@@ -223,8 +222,7 @@ func addConnection(cmsg ControlMsg) {
 				"sub",
 			)
 			sub <- vi
-		}
-		else {
+		} else {
 			logger.Println("Vertex already exists")
 		}
 	}
@@ -234,15 +232,13 @@ func remConnection(cmsg ControlMsg){
 	i, _ := getVertexInfo(cmsg, SubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, SubVertex)
-	}
-	else {
+	} else {
 		logger.Println("Vertex not found SubVertex")
 	}
 	i, _ := getVertexInfo(cmsg, PubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, PubVertex)
-	}
-	else {
+	} else {
 		logger.Println("Vertex not found in PubVertex")
 	}
 
