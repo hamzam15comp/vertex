@@ -56,7 +56,8 @@ var ptest PipeData = PipeData{
 }
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
-
+var stop = make(chan int)
+var done = make(chan int)
 
 func TransmitToEdge(){
 	for {
@@ -69,6 +70,22 @@ func TransmitToEdge(){
 				}
 		}
 		for i, vi := range PubVertex {
+			select {
+				case s := <-stop:
+					for {
+						logger.Println(
+						"Waiting to Publish",
+						)
+						time.Sleep(s*time.Second)
+						if <-done:{
+							break
+						}
+					}
+					continue
+				default: {
+					break
+				}
+			}
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -113,6 +130,22 @@ func ListenToEdge() {
 				}
 		}
 		for i, vi := range SubVertex {
+			select {
+				case s := <-stop:
+					for {
+						logger.Println(
+						"Waiting to Publish",
+						)
+						time.Sleep(s*time.Second)
+						if <-done:{
+							break
+						}
+					}
+					continue
+				default: {
+					break
+				}
+			}
 			var p PipeData
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
@@ -191,6 +224,7 @@ func SendToVagent(cmsg ControlMsg) {
 
 
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
+	stop <- 5
 	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return []VertexInfo{}
@@ -198,6 +232,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice[vi] = vertexSlice[vlen-1]
 	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
+	done <- 1
 	return vertexSlice
 }
 
