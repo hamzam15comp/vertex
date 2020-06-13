@@ -26,14 +26,14 @@ var pub21msg ControlMsg = ControlMsg{
 	Vertexno: 1,
 	Vertextype: "pub",
 	Cmd:	"add",
-	Msgid: "124",
+	Msgid: 124,
 }
 var sub11msg ControlMsg = ControlMsg{
 	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "sub",
 	Cmd:	"add",
-	Msgid: "124",
+	Msgid: 124,
 }
 var ptest PipeData = PipeData{
 	SendTo: "all",
@@ -180,7 +180,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 		return []VertexInfo{}
 	}
 	vertexSlice[vi] = vertexSlice[vlen-1]
-	vertexSlice[vlen-1] = nil
+	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
 	return vertexSlice
 }
@@ -188,23 +188,23 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 
 func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error) {
 	if len(vslice) == 0 {
-		return -1, VertexInfo{}, log.Errorf("Slice empty")
+		return -1, VertexInfo{}, fmt.Errorf("Slice empty")
 	}
 	for i, vi := range(vslice){
-		if vi.edge == cmd.edge && vi.vertexno == cmsg.Vertexno {
+		if vi.edge == cmsg.edge && vi.vertexno == cmsg.Vertexno {
 			return i, vi, nil
 		}
 	}
-	return -1, VertexInfo{}, log.Errorf("Not Found")
+	return -1, VertexInfo{}, fmt.Errorf("Not Found")
 }
 
 
 func addConnection(cmsg ControlMsg) {
 	if cmsg.Vertextype == "pub" {
-		i, vi := getVertexInfo(cmsg, PubVertex)
+		i, vi, err := getVertexInfo(cmsg, PubVertex)
 		if i == -1 {
 			vi = InitVertex(
-				cmsg.edge,
+				cmsg.Edge,
 				cmsg.Vertexno,
 				"pub",
 			)
@@ -214,7 +214,7 @@ func addConnection(cmsg ControlMsg) {
 		}
 	}
 	if cmsg.Vertextype == "sub" {
-		i, vi := getVertexInfo(cmsg, SubVertex)
+		i, vi, err := getVertexInfo(cmsg, SubVertex)
 		if i == -1 {
 			vi = InitVertex(
 				cmsg.edge,
@@ -229,13 +229,13 @@ func addConnection(cmsg ControlMsg) {
 }
 
 func remConnection(cmsg ControlMsg){
-	i, _ := getVertexInfo(cmsg, SubVertex)
+	i, _, err := getVertexInfo(cmsg, SubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, SubVertex)
 	} else {
 		logger.Println("Vertex not found SubVertex")
 	}
-	i, _ := getVertexInfo(cmsg, PubVertex)
+	i, _, err := getVertexInfo(cmsg, PubVertex)
 	if i != -1 {
 		SubVertex = removeVertexInfo(i, PubVertex)
 	} else {
