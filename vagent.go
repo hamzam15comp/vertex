@@ -260,7 +260,7 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 				)
 				time.Sleep(s*time.Second)
 				done := <-doneg
-				if <-done {
+				if done {
 					break
 				}
 			}
