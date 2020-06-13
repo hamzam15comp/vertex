@@ -165,8 +165,14 @@ func Vamain() {
 func SendToVagent(cmsg ControlMsg) {
 	host := "localhost:7000"
 	con, err := net.Dial("tcp", host)
+	if err != nil {
+		logger.Println(err)
+	}
 	enc := json.NewEncoder(con)
 	err = enc.Encode(cmsg)
+	if err != nil {
+		logger.Println(err)
+	}
 	defer con.Close()
 }
 func addConnection(cmsg ControlMsg) {
@@ -180,7 +186,10 @@ func handleController(conn net.Conn) {
 	dec := json.NewDecoder(conn)
 	var cmsg ControlMsg
 	err := dec.Decode(&cmsg)
+	if err != nil {
+		logger.Println(err)
+	}
 	fmt.Println(cmsg)
-	conn.Close()
+	defer conn.Close()
 
 }
