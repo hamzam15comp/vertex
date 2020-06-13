@@ -327,7 +327,7 @@ func remConnection(cmsg ControlMsg){
 			logger.Println("Vertex not found SubVertex")
 		}
 	} else {
-		i, _, _ = getVertexInfo(cmsg, PubVertex)
+		i, _, _ := getVertexInfo(cmsg, PubVertex)
 		if i != -1 {
 			SubVertex = removeVertexInfo(i, PubVertex)
 		} else {
