@@ -249,7 +249,6 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 					break
 				}
 			}
-			continue
 		default: {
 			break
 		}
