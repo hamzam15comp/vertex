@@ -237,8 +237,8 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	stopp <- 2
 	//stopg <- 2
 	vert := vertexSlice[vi]
-	vi.conn.Close()
-	vi.channel.Close()
+	vert.conn.Close()
+	vert.channel.Close()
 	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return []VertexInfo{}
