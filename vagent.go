@@ -63,6 +63,7 @@ func TransmitToEdge(){
 				pi.Data,
 			)
 			if serr != nil {
+				fmt.Println(i)
 				//removeVertexInfo(i, PubVertex)
 				logger.Printf(
 					`Send to edge %d failed.
@@ -111,6 +112,7 @@ func ListenToEdge() {
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
+				fmt.Println(i)
 				//removeVertexInfo(i, SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
