@@ -63,7 +63,7 @@ func TransmitToEdge(){
 				pi.Data,
 			)
 			if serr != nil {
-				removeVertexInfo(i, &PubVertex)
+				removeVertexInfo(i, PubVertex)
 				logger.Printf(
 					`Send to edge %d failed.
 					Closing and deleting connection`,
@@ -76,16 +76,14 @@ func TransmitToEdge(){
 
 }
 
-func removeVertexInfo(vi int, vertexSlice *[]VertexInfo){
-/*
-	vlen := len(*vertexSlice)
+func removeVertexInfo(vi int, vertexSlice []VertexInfo){
+	vlen := len(vertexSlice)
 	if vlen == 0 {
 		return
 	}
-	*vertexSlice[vi] = *vertexSlice[vlen-1]
-	*vertexSlice[vlen-1] = ""
-	*vertexSlice = *vertexSlice[:vlen-1]
-*/
+	vertexSlice[vi] = vertexSlice[vlen-1]
+	vertexSlice[vlen-1] = ""
+	vertexSlice = vertexSlice[:vlen-1]
 }
 
 
@@ -97,6 +95,7 @@ func FindInSlice(slice []VertexInfo, val VertexInfo) (int, bool) {
         }
         return -1, false
 }
+
 func ListenToEdge() {
 	for {
 		select {
@@ -112,7 +111,7 @@ func ListenToEdge() {
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
-				removeVertexInfo(i, &SubVertex)
+				removeVertexInfo(i, SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
 					Closing and deleting connection`,
@@ -151,6 +150,7 @@ func ListenToController(){
 	}
 }
 
+var exslice []byte{'a', 'b', 'c', 'd', 'e'}
 func Vamain() {
 	logInit()
 	go ListenToEdge()
@@ -160,6 +160,9 @@ func Vamain() {
 	for {
 		time.Sleep(10*time.Second)
 		SendToVagent(testcmsg)
+		fmt.Println(exslice)
+		removeFromSlice(2, exslice)
+		fmt.Println(exslice)
 	}
 }
 func SendToVagent(cmsg ControlMsg) {
