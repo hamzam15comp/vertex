@@ -69,6 +69,7 @@ func TransmitToEdge(){
 			case p := <-pub:
 				PubVertex = append(PubVertex, p)
 			default:
+				logger.Println("Back to Pub")
 				if len(PubVertex) == 0 {
 					continue
 				}
@@ -83,6 +84,7 @@ func TransmitToEdge(){
 						time.Sleep(s*time.Second)
 						done := <-donep
 						if done {
+							logger.Println("DoneP")
 							break
 						}
 					}
@@ -129,6 +131,7 @@ func ListenToEdge() {
 			case s := <-sub:
 				SubVertex = append(SubVertex, s)
 			default:
+				logger.Println("Back to Sub")
 				if len(SubVertex) == 0 {
 					continue
 				}
@@ -143,6 +146,7 @@ func ListenToEdge() {
 						time.Sleep(s*time.Second)
 						done := <-dones
 						if done {
+							logger.Println("DoneS")
 							break
 						}
 					}
@@ -201,15 +205,17 @@ func Vamain() {
 	logInit()
 	go ListenToEdge()
 	go TransmitToEdge()
-	//LaunchApp("/pkg/app.go")
 	go ListenToController()
+	SendToVagent(pubadd11msg)
+	SendToVagent(subadd11msg)
+	time.Sleep(30*time.Second)
+	SendToVagent(pubrem11msg)
+	time.Sleep(5*time.Second)
+	SendToVagent(subrem11msg)
+	time.Sleep(5*time.Second)
+	//SendToVagent(pubadd11msg)
+	//SendToVagent(subadd11msg)
 	for {
-		SendToVagent(pubadd11msg)
-		SendToVagent(subadd11msg)
-		time.Sleep(30*time.Second)
-		SendToVagent(pubrem11msg)
-		time.Sleep(5*time.Second)
-		SendToVagent(subrem11msg)
 		time.Sleep(5*time.Second)
 	}
 }
