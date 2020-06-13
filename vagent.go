@@ -186,9 +186,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 }
 
 
-func getVertexInfo(
-	cmsg ControlMsg,
-	vslice VertexInfo[]) (int, VertexInfo, error) {
+func getVertexInfo(cmsg ControlMsg, vslice VertexInfo[]) (int, VertexInfo, error) {
 	if len(vslice) == 0 {
 		return -1, VertexInfo{}, log.Errorf("Slice empty")
 	}
