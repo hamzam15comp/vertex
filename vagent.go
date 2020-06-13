@@ -63,7 +63,7 @@ func TransmitToEdge(){
 				pi.Data,
 			)
 			if serr != nil {
-				removeVertexInfo(i, PubVertex)
+				//removeVertexInfo(i, PubVertex)
 				logger.Printf(
 					`Send to edge %d failed.
 					Closing and deleting connection`,
@@ -82,7 +82,7 @@ func removeVertexInfo(vi int, vertexSlice []byte){ //[]VertexInfo){
 		return
 	}
 	vertexSlice[vi] = vertexSlice[vlen-1]
-	vertexSlice[vlen-1] = nil 
+	vertexSlice[vlen-1] = 0 
 	vertexSlice = vertexSlice[:vlen-1]
 }
 
@@ -111,7 +111,7 @@ func ListenToEdge() {
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
-				removeVertexInfo(i, SubVertex)
+				//removeVertexInfo(i, SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
 					Closing and deleting connection`,
