@@ -167,7 +167,6 @@ func SendToVagent(cmsg ControlMsg) {
 	con, err := net.Dial("tcp", host)
 	enc := json.NewEncoder(con)
 	err = enc.Encode(cmsg)
-	fmt.Println(err)
 	defer con.Close()
 }
 func addConnection(cmsg ControlMsg) {
@@ -181,7 +180,7 @@ func handleController(conn net.Conn) {
 	dec := json.NewDecoder(conn)
 	var cmsg ControlMsg
 	err := dec.Decode(&cmsg)
-	fmt.Println(cmsg, err)
+	fmt.Println(cmsg)
 	conn.Close()
 
 }
