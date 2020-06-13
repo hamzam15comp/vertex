@@ -141,7 +141,9 @@ func ListenToEdge() {
 						"Waiting to Subscribe",
 						)
 						time.Sleep(s*time.Second)
-						if <-dones {
+						done := <-dones
+						fmt.Println(done)
+						if done {
 							break
 						}
 					}
