@@ -130,7 +130,7 @@ func TransmitToEdge(){
 func ListenToEdge() {
 	for {
 		for i, vi := range SubVertex {
-			if checkAddRemove(PubVertex){
+			if checkAddRemove(SubVertex){
 				break
 			}
 			var p PipeData
