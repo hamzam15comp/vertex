@@ -189,7 +189,7 @@ func Vamain() {
 	go ListenToController()
 	SendToVagent(pubadd11msg)
 	SendToVagent(subadd11msg)
-	//time.Sleep(5*time.Second)
+	time.Sleep(5*time.Second)
 	//SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
 	//SendToVagent(subrem11msg)
@@ -271,6 +271,7 @@ func addConnection(cmsg ControlMsg) {
 				cmsg.Vertexno,
 				"pub",
 			)
+			fmt.Println("Created vertex: ", vi)
 			stopp <- 2
 			PubVertex = append(PubVertex, vi)
 			donep <- true
@@ -287,12 +288,14 @@ func addConnection(cmsg ControlMsg) {
 				"sub",
 			)
 			fmt.Println("Created vertex: ", vi)
-			sub <- vi
+			stops <- 2
+			SubVertex = append(SubVertex, vi)
+			dones <- true
 		} else {
 			logger.Println("Vertex already exists")
 		}
 	}
-	fmt.Println("added:\n",SubVertex)
+	fmt.Println("added:\n", SubVertex)
 	fmt.Println(PubVertex)
 }
 
