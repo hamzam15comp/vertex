@@ -63,34 +63,40 @@ var stopg = make(chan time.Duration)
 var dones = make(chan bool)
 var doneg = make(chan bool)
 
+func checkAddRemove(vertexSlice []VertexInfo)(bool) {
+	select {
+		case p:= <-pub:
+			vertexSlice = append(vertexSlice, p)
+			return false
+		case s:= <-stopp:
+			logger.Println("Transmit on Hold")
+			done := <-donep
+			if done {
+				logger.Println(
+					"Transmit Released",
+					s,
+				)
+			}
+			return true
+		case si:= <-stops:
+			logger.Println("ReceiveFromEdge on Hold")
+			donee := <-dones
+			if donee {
+				logger.Println(
+					"ReceiveFromEdge Released",
+					si,
+				)
+			}
+			return true
+		default:
+			return false
+	}
+}
 func TransmitToEdge(){
 	for {
-		select {
-			case p := <-pub:
-				PubVertex = append(PubVertex, p)
-			default:
-				logger.Println("Back to Pub")
-				if len(PubVertex) == 0 {
-					continue
-				}
-		}
 		for i, vi := range PubVertex {
-			select {
-				case s := <-stopp:
-					for {
-						logger.Println(
-						"Waiting to Publish",
-						)
-						time.Sleep(s*time.Second)
-						done := <-donep
-						if done {
-							logger.Println("DoneP")
-							break
-						}
-					}
-				default: {
-					break
-				}
+			if checkAddRemove(PubVertex){
+				break
 			}
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
@@ -126,32 +132,9 @@ func TransmitToEdge(){
 
 func ListenToEdge() {
 	for {
-		select {
-			case s := <-sub:
-				SubVertex = append(SubVertex, s)
-			default:
-				logger.Println("Back to Sub")
-				if len(SubVertex) == 0 {
-					continue
-				}
-		}
 		for i, vi := range SubVertex {
-			select {
-				case s := <-stops:
-					for {
-						logger.Println(
-						"Waiting to Subscribe",
-						)
-						time.Sleep(s*time.Second)
-						done := <-dones
-						if done {
-							logger.Println("DoneS")
-							break
-						}
-					}
-				default: {
-					break
-				}
+			if checkAddRemove(PubVertex){
+				break
 			}
 			var p PipeData
 			var err error
@@ -172,6 +155,8 @@ func ListenToEdge() {
 	}
 
 }
+
+
 func logInit() {
 	f, err := os.OpenFile("errors.log",
 		os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
@@ -181,6 +166,7 @@ func logInit() {
 
 	logger = log.New(f, "[INFO]", log.LstdFlags)
 }
+
 
 func ListenToController(){
 	listener, err := net.Listen("tcp", "0.0.0.0:7000")
