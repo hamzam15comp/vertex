@@ -192,7 +192,7 @@ func Vamain() {
 	go ListenToController()
 	SendToVagent(pubadd11msg)
 	SendToVagent(subadd11msg)
-	time.Sleep(30*time.Second)
+	time.Sleep(5*time.Second)
 	SendToVagent(pubrem11msg)
 	time.Sleep(5*time.Second)
 	SendToVagent(subrem11msg)
