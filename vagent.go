@@ -65,9 +65,6 @@ var doneg = make(chan bool)
 
 func checkAddRemove(vertexSlice []VertexInfo)(bool) {
 	select {
-		case p:= <-pub:
-			vertexSlice = append(vertexSlice, p)
-			return false
 		case s:= <-stopp:
 			logger.Println("Transmit on Hold")
 			done := <-donep
@@ -255,9 +252,6 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 	//		break
 	//	}
 	//}
-	if len(vslice) == 0 {
-		return -1, VertexInfo{}, fmt.Errorf("Slice empty")
-	}
 	for i, vi := range(vslice){
 		if vi.edge == cmsg.Edge && vi.vertexno == cmsg.Vertexno {
 			fmt.Println("GetVertexInfo returns: ", vi)
@@ -277,7 +271,9 @@ func addConnection(cmsg ControlMsg) {
 				cmsg.Vertexno,
 				"pub",
 			)
-			pub <- vi
+			stopp <- 2
+			PubVertex = append(PubVertex, vi)
+			donep <- true
 		} else {
 			logger.Println("Vertex already exists")
 		}
