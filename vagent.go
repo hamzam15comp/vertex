@@ -243,6 +243,7 @@ func UpdateConnection(cmsg ControlMsg) {
 					"Created Pubvertex: ",
 					vi.edge,
 					vi.vertexno,
+				)
 				PubVertex = append(PubVertex, vi)
 				pub <- PubVertex
 			} else {
