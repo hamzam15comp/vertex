@@ -73,6 +73,7 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 			return vertexSlice
 	}
 	mux.Unlock()
+	return vertexSlice
 }
 
 func TransmitToEdge(){
