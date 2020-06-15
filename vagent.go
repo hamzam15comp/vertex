@@ -81,6 +81,7 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 func TransmitToEdge(){
 	for {
 		PubVertex = checkAddRemove(PubVertex)
+		mux.Lock()
 		for i, vi := range PubVertex {
 			logger.Println(
 				"TransmitToEdge: PubV",
@@ -111,8 +112,8 @@ func TransmitToEdge(){
 				break
 			}
 			//fmt.Println("Sending to Edge", pi)
-
 		}
+		mux.Unlock()
 	}
 
 }
@@ -122,6 +123,7 @@ func TransmitToEdge(){
 func ListenToEdge() {
 	for {
 		SubVertex = checkAddRemove(SubVertex)
+		//mux.Lock()
 		for i, vi := range SubVertex {
 			logger.Println(
 				"ListenToEdge: SubV",
@@ -144,6 +146,7 @@ func ListenToEdge() {
 			//fmt.Println("Received from Edge", p)
 			logger.Println("Writing data %v to pipe", p)
 		}
+		//mux.Unlock()
 	}
 
 }
