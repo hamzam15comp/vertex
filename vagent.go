@@ -84,6 +84,9 @@ func TransmitToEdge(){
 	for {
 		PubVertex = checkAddRemove(PubVertex)
 		for i, vi := range PubVertex {
+			if vi.edge == 0 {
+				continue
+			}
 			logger.Println(
 				"TransmitToEdge: PubV",
 				vi.edge,
@@ -125,6 +128,9 @@ func ListenToEdge() {
 		SubVertex = checkAddRemove(SubVertex)
 		//mux.Lock()
 		for i, vi := range SubVertex {
+			if vi.edge == 0 {
+				continue
+			}
 			logger.Println(
 				"ListenToEdge: SubV",
 				vi.edge,
