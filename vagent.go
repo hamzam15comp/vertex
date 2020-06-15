@@ -330,6 +330,6 @@ func handleController(conn net.Conn) {
 		logger.Println(err)
 	}
 	UpdateConnection(cmsg)
-	defer conn.Close()
+	//defer conn.Close()
 
 }
