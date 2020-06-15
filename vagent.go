@@ -66,11 +66,11 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 	mux.Lock()
 	select {
 		case p := <-pub:
-			logger.Println("Updated PubVertex", PubVertex)
+			logger.Println("Updated PubVertex")
 			mux.Unlock()
 			return p
 		case s := <-sub:
-			logger.Println("Updated SubVertex", SubVertex)
+			logger.Println("Updated SubVertex")
 			mux.Unlock()
 			return s
 		default:
@@ -194,7 +194,8 @@ func Vamain() {
 	SendToVagent(pubadd11msg)
 	time.Sleep(5*time.Second)
 	SendToVagent(subadd11msg)
-	//SendToVagent(pubrem11msg)
+	time.Sleep(5*time.Second)
+	SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
 	//SendToVagent(subrem11msg)
 	time.Sleep(5*time.Second)
