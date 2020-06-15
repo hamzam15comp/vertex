@@ -82,6 +82,11 @@ func TransmitToEdge(){
 	for {
 		PubVertex = checkAddRemove(PubVertex)
 		for i, vi := range PubVertex {
+			logger.Println(
+				"TransmitToEdge: PubV",
+				vi.edge,
+				vi.vertexno
+			)
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -118,6 +123,11 @@ func ListenToEdge() {
 	for {
 		SubVertex = checkAddRemove(SubVertex)
 		for i, vi := range SubVertex {
+			logger.Println(
+				"ListenToEdge: SubV",
+				vi.edge,
+				vi.vertexno
+			)
 			var p PipeData
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
@@ -173,7 +183,7 @@ func Vamain() {
 	go TransmitToEdge()
 	go ListenToController()
 	SendToVagent(pubadd11msg)
-	//SendToVagent(subadd11msg)
+	SendToVagent(subadd11msg)
 	time.Sleep(5*time.Second)
 	//SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
