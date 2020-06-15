@@ -150,6 +150,7 @@ func ListenToEdge() {
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
 			if err != nil {
+				continue
 				SubVertex = removeVertexInfo(i, SubVertex)
 				logger.Printf(
 					`Receive from edge %d failed.
@@ -196,13 +197,13 @@ func ListenToController(){
 }
 
 
-func Vamain() {
+func VertexAgentLaunch() {
 	logInit()
 	go ListenToEdge()
 	go TransmitToEdge()
 	go ListenToController()
 	for {
-		continue
+		time.Sleep(1*time.Second)
 	}
 }
 
