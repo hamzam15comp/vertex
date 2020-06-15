@@ -108,10 +108,10 @@ func TransmitToEdge(){
 			)
 			if serr != nil {
 				PubVertex = removeVertexInfo(i, PubVertex)
-				logger.Printf(
-					`Send to edge %d failed.
-					Closing and deleting connection`,
+				logger.Println(
+					"Send to edge failed. Deleting connection",
 					vi.edge,
+					vi.vertexno,
 				)
 				break
 			}
@@ -228,7 +228,7 @@ func SendToVagent(cmsg ControlMsg) {
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vert := vertexSlice[vi]
 	logger.Println(
-		"removing:\n",
+		"removing:",
 		vert.vertexType,
 		vert.edge,
 		vert.vertexno,
