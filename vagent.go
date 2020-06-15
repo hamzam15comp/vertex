@@ -216,8 +216,8 @@ func Vamain() {
 	//SendToVagent(subadd11msg)
 	for {
 		time.Sleep(5*time.Second)
-		logger.Println(SubVertex)
-		logger.Println(PubVertex)
+		//logger.Println(SubVertex)
+		//logger.Println(PubVertex)
 	}
 }
 
