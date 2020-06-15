@@ -54,10 +54,10 @@ var ptest PipeData = PipeData{
 	Data: []byte("data"),
 }
 
-var SubVertex []VertexInfo
-var PubVertex []VertexInfo
-SubVertex = make([]VertexInfo, 16, 16)
-PubVertex = make([]VertexInfo, 16, 16)
+//var SubVertex []VertexInfo
+//var PubVertex []VertexInfo
+var SubVertex = make([]VertexInfo, 16, 16)
+var PubVertex = make([]VertexInfo, 16, 16)
 var pub = make(chan []VertexInfo, 1)
 var sub = make(chan []VertexInfo, 1)
 var mux sync.Mutex
