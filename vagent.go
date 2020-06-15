@@ -62,13 +62,22 @@ var pub = make(chan []VertexInfo, 1)
 var sub = make(chan []VertexInfo, 1)
 var mux sync.Mutex
 
-func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
+func checkAddRemovePub(vertexSlice []VertexInfo)([]VertexInfo) {
 	mux.Lock()
 	select {
 		case p := <-pub:
 			logger.Println("Updated PubVertex")
 			mux.Unlock()
 			return p
+		default:
+			break
+	}
+	mux.Unlock()
+	return vertexSlice
+}
+func checkAddRemoveSub(vertexSlice []VertexInfo)([]VertexInfo) {
+	mux.Lock()
+	select {
 		case s := <-sub:
 			logger.Println("Updated SubVertex")
 			mux.Unlock()
@@ -82,7 +91,7 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 
 func TransmitToEdge(){
 	for {
-		PubVertex = checkAddRemove(PubVertex)
+		PubVertex = checkAddRemovePub(PubVertex)
 		for i, vi := range PubVertex {
 			if vi.edge == 0 {
 				continue
@@ -126,7 +135,7 @@ func TransmitToEdge(){
 
 func ListenToEdge() {
 	for {
-		SubVertex = checkAddRemove(SubVertex)
+		SubVertex = checkAddRemoveSub(SubVertex)
 		//mux.Lock()
 		for i, vi := range SubVertex {
 			if vi.edge == 0 {
@@ -311,6 +320,12 @@ func UpdateConnection(cmsg ControlMsg) {
 					vi.vertexno,
 				)
 				SubVertex = append(SubVertex, vi)
+				select {
+					case <-sub:
+						break
+					default:
+						break
+				}
 				sub <- SubVertex
 			} else {
 				logger.Println("Vertex already exists")
