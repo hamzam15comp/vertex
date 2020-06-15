@@ -151,9 +151,7 @@ func SendDataEdge(
 //ReceiveDataEdge receives data
 func ReceiveDataEdge(v VertexInfo, ack bool) (string, []byte, error) {
 	msg := <-v.msgQ
-	if ack == true {
-		msg.Ack(true)
-	}
+	msg.Ack(ack)
 	return msg.Type, msg.Body, nil
 }
 
