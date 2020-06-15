@@ -170,7 +170,7 @@ func Vamain() {
 	go ListenToEdge()
 	go TransmitToEdge()
 	go ListenToController()
-	//SendToVagent(pubadd11msg)
+	SendToVagent(pubadd11msg)
 	//SendToVagent(subadd11msg)
 	time.Sleep(5*time.Second)
 	//SendToVagent(pubrem11msg)
