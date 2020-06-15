@@ -56,19 +56,19 @@ var ptest PipeData = PipeData{
 
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
-var pub = make(chan []VertexInfo)
-var sub = make(chan []VertexInfo)
+var pub = make(chan []VertexInfo, 1)
+var sub = make(chan []VertexInfo, 1)
 var mux sync.Mutex
 
 func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 	mux.Lock()
 	select {
 		case p := <-pub:
-			logger.Println("Updated PubVertex")
+			logger.Println("Updated PubVertex", PubVertex)
 			mux.Unlock()
 			return p
 		case s := <-sub:
-			logger.Println("Updated SubVertex")
+			logger.Println("Updated SubVertex", SubVertex)
 			mux.Unlock()
 			return s
 		default:
@@ -253,8 +253,7 @@ func UpdateConnection(cmsg ControlMsg) {
 			} else {
 				logger.Println("Vertex already exists")
 			}
-		}
-		if cmsg.Vertextype == "sub" {
+		} else if cmsg.Vertextype == "sub" {
 			i, _ , _ := getVertexInfo(cmsg, SubVertex)
 			if i == -1 {
 				vi := InitVertex(
