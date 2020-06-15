@@ -61,7 +61,7 @@ var sub = make(chan []VertexInfo, 1)
 var mux sync.Mutex
 
 func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
-	mux.Lock()
+	//mux.Lock()
 	select {
 		case p := <-pub:
 			logger.Println("Updated PubVertex", PubVertex)
@@ -74,7 +74,7 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 		default:
 			break
 	}
-	mux.Unlock()
+	//mux.Unlock()
 	return vertexSlice
 }
 
