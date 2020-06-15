@@ -85,7 +85,7 @@ func TransmitToEdge(){
 			logger.Println(
 				"TransmitToEdge: PubV",
 				vi.edge,
-				vi.vertexno
+				vi.vertexno,
 			)
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
@@ -126,7 +126,7 @@ func ListenToEdge() {
 			logger.Println(
 				"ListenToEdge: SubV",
 				vi.edge,
-				vi.vertexno
+				vi.vertexno,
 			)
 			var p PipeData
 			var err error
