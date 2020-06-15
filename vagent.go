@@ -201,21 +201,8 @@ func Vamain() {
 	go ListenToEdge()
 	go TransmitToEdge()
 	go ListenToController()
-	SendToVagent(pubadd11msg)
-	time.Sleep(5*time.Second)
-	SendToVagent(subadd11msg)
-	time.Sleep(5*time.Second)
-	SendToVagent(pubrem11msg)
-	time.Sleep(5*time.Second)
-	SendToVagent(subrem11msg)
-	time.Sleep(5*time.Second)
-	SendToVagent(pubadd11msg)
-	time.Sleep(5*time.Second)
-	SendToVagent(subadd11msg)
 	for {
-		time.Sleep(5*time.Second)
-		//logger.Println(SubVertex)
-		//logger.Println(PubVertex)
+		continue
 	}
 }
 
@@ -368,6 +355,6 @@ func handleController(conn net.Conn) {
 		logger.Println(err)
 	}
 	UpdateConnection(cmsg)
-	//defer conn.Close()
+	defer conn.Close()
 
 }
