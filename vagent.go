@@ -218,7 +218,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vert := vertexSlice[vi]
 	logger.Println(
 		"removing:\n",
-		vert.vertextype,
+		vert.vertexType,
 		vert.edge,
 		vert.vertexno,
 	)
