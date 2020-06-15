@@ -7,11 +7,10 @@ import (
 	"net"
 	"os"
 	"time"
+	"sync"
 )
 
 var logger *log.Logger
-var pub = make(chan VertexInfo)
-var sub = make(chan VertexInfo)
 
 type ControlMsg struct {
 	Edge       int
@@ -26,75 +25,60 @@ var pubadd11msg ControlMsg = ControlMsg{
 	Vertexno: 1,
 	Vertextype: "pub",
 	Cmd:	"add",
-	Msgid: 124,
+	Msgid: 1,
 }
 var subadd11msg ControlMsg = ControlMsg{
 	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "sub",
 	Cmd:	"add",
-	Msgid: 124,
+	Msgid: 2,
 }
 var pubrem11msg ControlMsg = ControlMsg{
 	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "pub",
 	Cmd:	"rem",
-	Msgid: 124,
+	Msgid: 3,
 }
 var subrem11msg ControlMsg = ControlMsg{
 	Edge: 1,
 	Vertexno: 1,
 	Vertextype: "sub",
 	Cmd:	"rem",
-	Msgid: 124,
+	Msgid: 4,
 }
 var ptest PipeData = PipeData{
 	SendTo: "all",
 	Datatype: "datatype",
 	Data: []byte("data"),
 }
+
 var SubVertex = []VertexInfo{}
 var PubVertex = []VertexInfo{}
-var stopp = make(chan time.Duration)
-var donep = make(chan bool)
-var stops = make(chan time.Duration)
-var stopg = make(chan time.Duration)
-var dones = make(chan bool)
-var doneg = make(chan bool)
+var pub = make(chan []VertexInfo)
+var sub = make(chan []VertexInfo)
+var mux sync.Mutex
 
-func checkAddRemove(vertexSlice []VertexInfo)(bool) {
+func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
+	mux.Lock()
 	select {
-		case s:= <-stopp:
-			logger.Println("Transmit on Hold")
-			done := <-donep
-			if done {
-				logger.Println(
-					"Transmit Released",
-					s,
-				)
-			}
-			return true
-		case si:= <-stops:
-			logger.Println("ReceiveFromEdge on Hold")
-			donee := <-dones
-			if donee {
-				logger.Println(
-					"ReceiveFromEdge Released",
-					si,
-				)
-			}
-			return true
+		case p := <-pub:
+			logger.Println("Updated PubVertex")
+			return p
+		case s := <-sub:
+			logger.Println("Updated SubVertex")
+			return s
 		default:
-			return false
+			return vertexSlice
 	}
+	mux.Unlock()
 }
+
 func TransmitToEdge(){
 	for {
+		PubVertex = checkAddRemove(PubVertex)
 		for i, vi := range PubVertex {
-			if checkAddRemove(PubVertex){
-				break
-			}
 			pi, perr := ReadFromPipe(OUT)
 			if perr != nil {
 				logger.Printf(
@@ -129,10 +113,8 @@ func TransmitToEdge(){
 
 func ListenToEdge() {
 	for {
+		SubVertex = checkAddRemove(SubVertex){
 		for i, vi := range SubVertex {
-			if checkAddRemove(SubVertex){
-				break
-			}
 			var p PipeData
 			var err error
 			p.Datatype, p.Data, err = ReceiveDataEdge(vi, true)
@@ -177,7 +159,7 @@ func ListenToController(){
 			logger.Println("tcp server accept error", err)
 		}
 
-		go handleController(conn)
+		handleController(conn)
 	}
 }
 
@@ -187,8 +169,8 @@ func Vamain() {
 	go ListenToEdge()
 	go TransmitToEdge()
 	go ListenToController()
-	SendToVagent(pubadd11msg)
-	SendToVagent(subadd11msg)
+	//SendToVagent(pubadd11msg)
+	//SendToVagent(subadd11msg)
 	time.Sleep(5*time.Second)
 	//SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
@@ -236,22 +218,6 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 
 
 func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error) {
-	//select {
-	//	case s := <-stopg:
-	//		for {
-	//			logger.Println(
-	//			"Waiting to Remove",
-	//			)
-	//			time.Sleep(s*time.Second)
-	//			done := <-doneg
-	//			if done {
-	//				break
-	//			}
-	//		}
-	//	default: {
-	//		break
-	//	}
-	//}
 	for i, vi := range(vslice){
 		if vi.edge == cmsg.Edge && vi.vertexno == cmsg.Vertexno {
 			fmt.Println("GetVertexInfo returns: ", vi)
@@ -262,63 +228,74 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 }
 
 
-func addConnection(cmsg ControlMsg) {
-	if cmsg.Vertextype == "pub" {
-		i, _ , _ := getVertexInfo(cmsg, PubVertex)
-		if i == -1 {
-			vi := InitVertex(
-				cmsg.Edge,
-				cmsg.Vertexno,
-				"pub",
-			)
-			fmt.Println("Created vertex: ", vi)
-			stopp <- 2
-			PubVertex = append(PubVertex, vi)
-			donep <- true
-		} else {
-			logger.Println("Vertex already exists")
+func UpdateConnection(cmsg ControlMsg) {
+	mux.Lock()
+	if cmsg.Cmd == "add" {
+		if cmsg.Vertextype == "pub" {
+			i, _ , _ := getVertexInfo(cmsg, PubVertex)
+			if i == -1 {
+				vi := InitVertex(
+					cmsg.Edge,
+					cmsg.Vertexno,
+					"pub",
+				)
+				logger.Println(
+					"Created Pubvertex: ",
+					vi.edge,
+					vi.vertexno,
+				PubVertex = append(PubVertex, vi)
+				pub <- PubVertex
+			} else {
+				logger.Println("Vertex already exists")
+			}
 		}
-	}
-	if cmsg.Vertextype == "sub" {
-		i, _ , _ := getVertexInfo(cmsg, SubVertex)
-		if i == -1 {
-			vi := InitVertex(
-				cmsg.Edge,
-				cmsg.Vertexno,
-				"sub",
-			)
-			fmt.Println("Created vertex: ", vi)
-			stops <- 2
-			SubVertex = append(SubVertex, vi)
-			dones <- true
+		if cmsg.Vertextype == "sub" {
+			i, _ , _ := getVertexInfo(cmsg, SubVertex)
+			if i == -1 {
+				vi := InitVertex(
+					cmsg.Edge,
+					cmsg.Vertexno,
+					"sub",
+				)
+				logger.Println(
+					"Created Subvertex: ",
+					vi.edge,
+					vi.vertexno,
+				)
+				SubVertex = append(SubVertex, vi)
+				sub <- SubVertex
+			} else {
+				logger.Println("Vertex already exists")
+			}
 		} else {
-			logger.Println("Vertex already exists")
+			logger.Println("Invalid vertextype")
 		}
-	}
-	fmt.Println("added:\n", SubVertex)
-	fmt.Println(PubVertex)
-}
+	} else if cmsg.Cmd == "rem" {
 
-func remConnection(cmsg ControlMsg){
-	stops <- 2
-	stopp <- 2
-	if cmsg.Vertextype == "sub" {
-		i, _, _ := getVertexInfo(cmsg, SubVertex)
-		if i != -1 {
-			SubVertex = removeVertexInfo(i, SubVertex)
+		if cmsg.Vertextype == "sub" {
+			i, _, _ := getVertexInfo(cmsg, SubVertex)
+			if i != -1 {
+				SubVertex = removeVertexInfo(i, SubVertex)
+				sub <- SubVertex
+			} else {
+				logger.Println("Vertex not found SubVertex")
+			}
+		} else if cmsg.Vertextype == "pub" {
+			i, _, _ := getVertexInfo(cmsg, PubVertex)
+			if i != -1 {
+				PubVertex = removeVertexInfo(i, PubVertex)
+				pub <- PubVertex
+			} else {
+				logger.Println("Vertex not found in PubVertex")
+			}
 		} else {
-			logger.Println("Vertex not found SubVertex")
+			logger.Println("Invalid vertextype")
 		}
+
 	} else {
-		i, _, _ := getVertexInfo(cmsg, PubVertex)
-		if i != -1 {
-			SubVertex = removeVertexInfo(i, PubVertex)
-		} else {
-			logger.Println("Vertex not found in PubVertex")
-		}
+		logger.Println("Invalid command")
 	}
-	dones <- true
-	donep <- true
+	mux.Unlock()
 }
 
 func handleController(conn net.Conn) {
@@ -328,12 +305,7 @@ func handleController(conn net.Conn) {
 	if err != nil {
 		logger.Println(err)
 	}
-	if cmsg.Cmd == "add" {
-		addConnection(cmsg)
-	}
-	if cmsg.Cmd == "rem" {
-		remConnection(cmsg)
-	}
+	go UpdateConnection(cmsg)
 	defer conn.Close()
 
 }
