@@ -54,14 +54,14 @@ var ptest PipeData = PipeData{
 	Data: []byte("data"),
 }
 
-var SubVertex = []VertexInfo{}
-var PubVertex = []VertexInfo{}
+var SubVertex = [8]VertexInfo{}
+var PubVertex = [8]VertexInfo{}
 var pub = make(chan []VertexInfo, 1)
 var sub = make(chan []VertexInfo, 1)
 var mux sync.Mutex
 
 func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
-	//mux.Lock()
+	mux.Lock()
 	select {
 		case p := <-pub:
 			logger.Println("Updated PubVertex", PubVertex)
@@ -74,14 +74,13 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 		default:
 			break
 	}
-	//mux.Unlock()
+	mux.Unlock()
 	return vertexSlice
 }
 
 func TransmitToEdge(){
 	for {
 		PubVertex = checkAddRemove(PubVertex)
-		mux.Lock()
 		for i, vi := range PubVertex {
 			logger.Println(
 				"TransmitToEdge: PubV",
@@ -113,7 +112,6 @@ func TransmitToEdge(){
 			}
 			//fmt.Println("Sending to Edge", pi)
 		}
-		mux.Unlock()
 	}
 
 }
