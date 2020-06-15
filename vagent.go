@@ -191,9 +191,10 @@ func Vamain() {
 	SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
 	//SendToVagent(subrem11msg)
-	//time.Sleep(5*time.Second)
-	fmt.Println(SubVertex)
-	fmt.Println(PubVertex)
+	time.Sleep(5*time.Second)
+	SendToVagent(pubadd11msg)
+	//fmt.Println(SubVertex)
+	//fmt.Println(PubVertex)
 	//SendToVagent(pubadd11msg)
 	//SendToVagent(subadd11msg)
 	for {
