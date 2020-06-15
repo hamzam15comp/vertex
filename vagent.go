@@ -270,7 +270,7 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 
 
 func UpdateConnection(cmsg ControlMsg) {
-	logger.Println("UpdateConn: Waiting for mutex")
+	logger.Println("UpdateConn: Waiting for mutex", cmsg)
 	mux.Lock()
 	if cmsg.Cmd == "add" {
 		if cmsg.Vertextype == "pub" {
