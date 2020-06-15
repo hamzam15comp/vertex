@@ -220,7 +220,7 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 		"removing:\n",
 		vert.vertextype,
 		vert.edge,
-		vert.vertexno
+		vert.vertexno,
 	)
 	vert.conn.Close()
 	vert.channel.Close()
