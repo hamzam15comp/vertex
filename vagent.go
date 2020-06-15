@@ -230,6 +230,7 @@ func getVertexInfo(cmsg ControlMsg, vslice []VertexInfo) (int, VertexInfo, error
 
 
 func UpdateConnection(cmsg ControlMsg) {
+	logger.Println("UpdateConn: Waiting for mutex")
 	mux.Lock()
 	if cmsg.Cmd == "add" {
 		if cmsg.Vertextype == "pub" {
@@ -298,6 +299,7 @@ func UpdateConnection(cmsg ControlMsg) {
 		logger.Println("Invalid command")
 	}
 	mux.Unlock()
+	logger.Println("UpdateConn: Released lock")
 }
 
 func handleController(conn net.Conn) {
