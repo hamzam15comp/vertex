@@ -287,6 +287,12 @@ func UpdateConnection(cmsg ControlMsg) {
 					vi.vertexno,
 				)
 				PubVertex = append(PubVertex, vi)
+				select {
+					case <-pub:
+						break
+					default:
+						break
+				}
 				pub <- PubVertex
 			} else {
 				logger.Println("Vertex already exists")
