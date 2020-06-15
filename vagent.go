@@ -113,7 +113,7 @@ func TransmitToEdge(){
 
 func ListenToEdge() {
 	for {
-		SubVertex = checkAddRemove(SubVertex){
+		SubVertex = checkAddRemove(SubVertex)
 		for i, vi := range SubVertex {
 			var p PipeData
 			var err error
