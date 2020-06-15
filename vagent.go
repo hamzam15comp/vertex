@@ -65,12 +65,14 @@ func checkAddRemove(vertexSlice []VertexInfo)([]VertexInfo) {
 	select {
 		case p := <-pub:
 			logger.Println("Updated PubVertex")
+			mux.Unlock()
 			return p
 		case s := <-sub:
 			logger.Println("Updated SubVertex")
+			mux.Unlock()
 			return s
 		default:
-			return vertexSlice
+			break
 	}
 	mux.Unlock()
 	return vertexSlice
