@@ -110,7 +110,7 @@ func TransmitToEdge(){
 				)
 				break
 			}
-			fmt.Println("Sending to Edge", pi)
+			//fmt.Println("Sending to Edge", pi)
 
 		}
 	}
@@ -141,7 +141,7 @@ func ListenToEdge() {
 				break
 			}
 			WriteToPipe(IN, p)
-			fmt.Println("Received from Edge", p)
+			//fmt.Println("Received from Edge", p)
 			logger.Println("Writing data %v to pipe", p)
 		}
 	}
@@ -185,7 +185,7 @@ func Vamain() {
 	SendToVagent(pubadd11msg)
 	SendToVagent(subadd11msg)
 	time.Sleep(5*time.Second)
-	//SendToVagent(pubrem11msg)
+	SendToVagent(pubrem11msg)
 	//time.Sleep(5*time.Second)
 	//SendToVagent(subrem11msg)
 	//time.Sleep(5*time.Second)
@@ -216,6 +216,12 @@ func SendToVagent(cmsg ControlMsg) {
 
 func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vert := vertexSlice[vi]
+	logger.Println(
+		"removing:\n",
+		vert.vertextype,
+		vert.edge,
+		vert.vertexno
+	)
 	vert.conn.Close()
 	vert.channel.Close()
 	vlen := len(vertexSlice)
@@ -225,7 +231,6 @@ func removeVertexInfo(vi int, vertexSlice []VertexInfo) ([]VertexInfo){
 	vertexSlice[vi] = vertexSlice[vlen-1]
 	vertexSlice[vlen-1] = VertexInfo{}
 	vertexSlice = vertexSlice[:vlen-1]
-	fmt.Println("removed:\n",vertexSlice)
 	return vertexSlice
 }
 
@@ -320,7 +325,7 @@ func handleController(conn net.Conn) {
 	if err != nil {
 		logger.Println(err)
 	}
-	go UpdateConnection(cmsg)
+	UpdateConnection(cmsg)
 	defer conn.Close()
 
 }
