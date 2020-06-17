@@ -2,7 +2,6 @@ package vertex
 
 import (
 	"fmt"
-	"os/exec"
 )
 
 var IN string = "/in"
