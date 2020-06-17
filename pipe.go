@@ -21,7 +21,7 @@ func CreatePipe(pipeName string) error {
 		return mkerr
 	}
 	fmt.Println("1")
-	f, operr := os.OpenFile(pipeName, os.O_WRONLY, 0660)
+	f, operr := os.OpenFile(pipeName, os.O_RDWR, os.ModeNamedPipe)//0660)
 	if operr != nil {
 		return operr
 	}
