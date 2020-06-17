@@ -4,8 +4,8 @@ import (
 	"fmt"
 )
 
-var IN string = "/in"
-var OUT string = "/out"
+var IN string = "in"
+var OUT string = "out"
 
 func ReadData() (string, []byte, error) {
 	pdata, err := ReadFromPipe(IN)
