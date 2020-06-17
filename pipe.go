@@ -17,7 +17,7 @@ type PipeData struct {
 func CreatePipe(pipeName string) error {
 	mkerr := syscall.Mkfifo(pipeName, 0660)
 	if mkerr != nil && !os.IsExist(mkerr) {
-		return nil
+		return mkerr
 	}
 	f, operr := os.OpenFile(pipeName, os.O_WRONLY, 0660)
 	if operr != nil {
