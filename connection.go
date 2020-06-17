@@ -5,8 +5,8 @@ import (
 	"os/exec"
 )
 
-var IN string = "/tmp/in"
-var OUT string = "/tmp/out"
+var IN string = "/in"
+var OUT string = "/out"
 
 func ReadData() (string, []byte, error) {
 	pdata, err := ReadFromPipe(IN)
