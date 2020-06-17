@@ -29,8 +29,13 @@ func WriteData(sendTo string, datatype string, data []byte) error {
 }
 
 func LaunchApp() error {
-	CreatePipe(IN)
-	CreatePipe(OUT)
+	perr := CreatePipe(IN)
+	if perr != nil {
+		return fmt.Errorf("Failed to create in")
+	perr = CreatePipe(OUT)
+	if perr != nil {
+		return fmt.Errorf("Failed to create out")
+	}
 	return nil
 }
 
