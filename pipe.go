@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"syscall"
-	"fmt"
 )
 
 type PipeData struct {
@@ -20,19 +19,16 @@ func CreatePipe(pipeName string) error {
 	if mkerr != nil && !os.IsExist(mkerr) {
 		return mkerr
 	}
-	fmt.Println("1")
 	f, operr := os.OpenFile(pipeName, os.O_RDWR, os.ModeNamedPipe)//0660)
 	if operr != nil {
 		return operr
 	}
-	fmt.Println("2")
 	// In case we're using a pre-made file, check that it's actually a FIFO
 	fi, ferr := f.Stat()
 	if ferr != nil {
 		f.Close()
 		return ferr
 	}
-	fmt.Println("3")
 	if fi.Mode()&os.ModeType != os.ModeNamedPipe {
 		f.Close()
 		return os.ErrExist
