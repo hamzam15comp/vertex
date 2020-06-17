@@ -33,6 +33,7 @@ func LaunchApp() error {
 	if perr != nil {
 		return fmt.Errorf("Failed to create in")
 	}
+	fmt.Println("Reached here")
 	perr = CreatePipe(OUT)
 	if perr != nil {
 		return fmt.Errorf("Failed to create out")
