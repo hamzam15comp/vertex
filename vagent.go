@@ -209,8 +209,8 @@ func VertexAgentLaunch() {
 }
 
 
-func SendToVagent(cmsg ControlMsg, port int) {
-	host := "localhost:" + strconv.Itoa(port)
+func SendToVagent(cmsg ControlMsg, hostname string, port int) {
+	host := hostname + ":" + strconv.Itoa(port)
 	con, err := net.Dial("tcp", host)
 	if err != nil {
 		logger.Println(err)
