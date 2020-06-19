@@ -6,7 +6,6 @@ import (
 	"io"
 	"os"
 	"syscall"
-	"fmt"
 )
 
 type PipeData struct {
@@ -48,10 +47,8 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if operr != nil {
 		return PipeData{}, operr
 	}
-	fmt.Println(input)
 	defer input.Close()
 	io.Copy(&buff, input)
-	fmt.Println("Did you reach here ReadFromPipe?", p)
 	b := buff.Bytes()
 	jerr := json.Unmarshal(b, &p)
 	if jerr != nil {
