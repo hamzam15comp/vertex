@@ -46,6 +46,7 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if operr != nil {
 		return PipeData{}, operr
 	}
+	logger.Println("Did you reach here?")
 	defer input.Close()
 	io.Copy(&buff, input)
 	b := buff.Bytes()
