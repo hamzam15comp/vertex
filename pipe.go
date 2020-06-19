@@ -34,6 +34,7 @@ func CreatePipe(pipeName string) error {
 		f.Close()
 		return os.ErrExist
 	}
+	defer f.Close()
 	return nil
 }
 
@@ -47,9 +48,10 @@ func ReadFromPipe(pipeName string) (PipeData, error) {
 	if operr != nil {
 		return PipeData{}, operr
 	}
+	fmt.Println(input)
 	defer input.Close()
 	io.Copy(&buff, input)
-	logger.Println("Did you reach here ReadFromPipe?", p)
+	fmt.Println("Did you reach here ReadFromPipe?", p)
 	b := buff.Bytes()
 	jerr := json.Unmarshal(b, &p)
 	if jerr != nil {
@@ -74,7 +76,6 @@ func WriteToPipe(pipeName string, pdata PipeData) error {
 	if wrerr != nil {
 		return wrerr
 	}
-	fmt.Println("WriteToPipe:", b)
 	output.Close()
 	return nil
 }
