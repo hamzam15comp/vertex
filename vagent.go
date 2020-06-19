@@ -213,12 +213,12 @@ func SendToVagent(cmsg ControlMsg, hostname string, port int) {
 	host := hostname + ":" + strconv.Itoa(port)
 	con, err := net.Dial("tcp", host)
 	if err != nil {
-		logger.Println(err)
+		fmt.Println(err)
 	}
 	enc := json.NewEncoder(con)
 	err = enc.Encode(cmsg)
 	if err != nil {
-		logger.Println(err)
+		fmt.Println(err)
 	}
 	defer con.Close()
 }
