@@ -25,7 +25,7 @@ func WriteData(sendTo string, datatype string, data []byte) error {
 	if err != nil {
 		return fmt.Errorf("Write failed")
 	}
-	logger.Println(pdata)
+	fmt.Println(pdata)
 	return nil
 }
 
