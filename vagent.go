@@ -92,6 +92,14 @@ func checkAddRemoveSub(vertexSlice []VertexInfo)([]VertexInfo) {
 
 func TransmitToEdge(){
 	for {
+		pi, perr := ReadFromPipe(OUT)
+		if perr != nil {
+			logger.Printf(
+				`Read from pipe failed Trying again...`,
+			)
+			continue
+		}
+		logger.Printf("Received from pipe\n")
 		PubVertex = checkAddRemovePub(PubVertex)
 		for i, vi := range PubVertex {
 			if vi.edge == 0 {
@@ -102,14 +110,6 @@ func TransmitToEdge(){
 				vi.edge,
 				vi.vertexno,
 			)
-			pi, perr := ReadFromPipe(OUT)
-			if perr != nil {
-				logger.Printf(
-					`Read from pipe failed Trying again...`,
-				)
-				continue
-			}
-			logger.Printf("Received from pipe\n")
 			serr := SendDataEdge(
 				vi,
 				pi.SendTo,
