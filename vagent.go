@@ -177,7 +177,7 @@ func logInit() {
 		log.Println(err)
 	}
 
-	logger = log.New(f, "[INFO]", log.LstdFlags)
+	logger = log.New(f, "[INFO]", log.Lmicroseconds | log.LUTC)
 }
 
 
