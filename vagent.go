@@ -162,7 +162,7 @@ func ListenToEdge() {
 			}
 			WriteToPipe(IN, p)
 			//fmt.Println("Received from Edge", p)
-			logger.Println("Writing data %v to pipe", p)
+			logger.Println("Writing data %v to pipe")
 		}
 		//mux.Unlock()
 	}
