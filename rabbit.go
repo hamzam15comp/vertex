@@ -68,6 +68,9 @@ func InitVertex(edge int, vertex int, vertexType string) VertexInfo {
 
 	// Subscriber Code
 	if vertexType == "sub" {
+		args := amqp.Table {
+			"x-max-length-bytes": int(1<<31),
+		}
 		v.queueName = fmt.Sprintf("Q%d%d", v.edge, v.vertexno)
 		v.key = fmt.Sprintf("%d.%d", v.edge, v.vertexno)
 		v.q, err = v.channel.QueueDeclare(
@@ -76,7 +79,7 @@ func InitVertex(edge int, vertex int, vertexType string) VertexInfo {
 			false,
 			false,
 			false,
-			nil,
+			args,
 		)
 		failOnError(err, "Failed to declare a queue")
 		err = v.channel.QueueBind(
