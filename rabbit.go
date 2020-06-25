@@ -69,7 +69,7 @@ func InitVertex(edge int, vertex int, vertexType string) VertexInfo {
 	// Subscriber Code
 	if vertexType == "sub" {
 		args := amqp.Table {
-			"x-max-length-bytes": int(1<<31),
+			"x-max-length-bytes": int(1<<30),
 		}
 		v.queueName = fmt.Sprintf("Q%d%d", v.edge, v.vertexno)
 		v.key = fmt.Sprintf("%d.%d", v.edge, v.vertexno)
