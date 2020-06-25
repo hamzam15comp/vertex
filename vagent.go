@@ -193,7 +193,7 @@ func ListenToController(){
 			logger.Println("tcp server accept error", err)
 		}
 
-		handleController(conn)
+		go handleController(conn)
 	}
 }
 
